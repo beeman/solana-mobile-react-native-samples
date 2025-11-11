@@ -10,6 +10,7 @@ For feedback and suggestions, please open an issue on this repository.
 | ------ | ----------- |
 | **Basic Counter** <br><br>[> Browse](/basic-counter) | A simple counter app demonstrating state management and basic UI patterns. <br><br>• Beginner friendly<br>• React Hooks<br>• Core Components |
 | **Todo List** <br><br>[> Browse](/todo-list) | Task management app showcasing list rendering, data persistence, and navigation. <br><br>• Intermediate<br>• AsyncStorage<br>• FlatList optimization |
+| **Settle** <br><br>[> Browse](/settle) | Expenses splitting app showcasing functionality to connect wallet and repay debts with transfer transactions <br><br>• Beginner friendly<br>• Connect wallet<br>• Send and View Transactions|
 
 ## 🛠️ Getting Started
 
