@@ -81,7 +81,6 @@ cd frontend
 npm install
 
 # Configure API URL in .env (defaults to Android Emulator)
-# For iOS: Change to EXPO_PUBLIC_API_URL=http://localhost:3000/api
 
 npx expo prebuild --clean  # Required for native modules
 npx expo run:android

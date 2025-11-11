@@ -136,9 +136,6 @@ Configure the API URL in `frontend/.env`:
 # For Android Emulator
 EXPO_PUBLIC_API_URL=http://10.0.2.2:3000/api
 
-# For iOS Simulator
-EXPO_PUBLIC_API_URL=http://localhost:3000/api
-
 # For Physical Device (replace with your computer's IP)
 EXPO_PUBLIC_API_URL=http://192.168.1.x:3000/api
 ```

@@ -157,14 +157,11 @@ npx expo prebuild --clean
 
 # Build for Android
 npx expo run:android
-
-# Build for iOS
-npx expo run:ios
 ```
 
 **Why Not Expo Go**:
 - Expo Go doesn't include custom native modules
-- Mobile Wallet Adapter requires native Android/iOS code
+- Mobile Wallet Adapter requires native Android code
 - Must use development build or EAS Build
 
 ### Verify Setup
