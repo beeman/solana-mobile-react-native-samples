@@ -15,6 +15,7 @@ import { AppText } from '@/components/app-text';
 import { useDomainLookup, SearchMode } from '@/hooks/use-domain-lookup';
 import { useAuth } from '@/components/auth/auth-provider';
 import { router, Redirect } from 'expo-router';
+import Animated, { FadeIn, FadeInDown, FadeInUp, SlideInDown, SlideInUp } from 'react-native-reanimated';
 
 export default function Index() {
   const { isAuthenticated, signOut } = useAuth();
@@ -61,7 +62,10 @@ export default function Index() {
         <SafeAreaView style={styles.safeAreaTop} edges={['top']}>
           {/* Header Section */}
           <View style={styles.headerSection}>
-            <View style={styles.headerContent}>
+            <Animated.View
+              style={styles.headerContent}
+              entering={FadeInDown.duration(600).delay(100)}
+            >
               <View style={styles.headerTop}>
                 <View>
                   <AppText style={styles.title}>Domain Lookup</AppText>
@@ -71,16 +75,20 @@ export default function Index() {
                   <AppText style={styles.logoutText}>Sign Out</AppText>
                 </Pressable>
               </View>
-            </View>
+            </Animated.View>
           </View>
         </SafeAreaView>
 
         {/* Main Content Card - Bottom with rounded top */}
         <View style={styles.contentCard}>
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.scrollContent}
+          <Animated.View
+            entering={FadeInUp.duration(700).delay(200)}
+            style={{ flex: 1 }}
           >
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.scrollContent}
+            >
             {/* Toggle */}
             <View style={styles.toggleContainer}>
               <Pressable
@@ -198,7 +206,8 @@ export default function Index() {
                 <AppText style={styles.errorMessage}>{result.error}</AppText>
               </View>
             )}
-          </ScrollView>
+            </ScrollView>
+          </Animated.View>
         </View>
       </LinearGradient>
     </View>

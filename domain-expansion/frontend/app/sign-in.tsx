@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { router, Redirect } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '@/components/auth/auth-provider';
@@ -5,16 +6,31 @@ import { AppText } from '@/components/app-text';
 import { AppConfig } from '@/constants/app-config';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ActivityIndicator, View, StyleSheet, Pressable, Image } from 'react-native';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
+import { AnimatedSplash } from '@/components/animated-splash';
 
 export default function SignIn() {
   const { signIn, isLoading, isAuthenticated } = useAuth();
+  const [showSplash, setShowSplash] = useState(true);
 
   if (isAuthenticated) {
     return <Redirect href="/" />;
   }
 
+  if (showSplash) {
+    return (
+      <AnimatedSplash
+        onAnimationComplete={() => setShowSplash(false)}
+      />
+    );
+  }
+
   return (
-    <View style={styles.container}>
+    <Animated.View
+      style={styles.container}
+      entering={FadeIn.duration(800)}
+      exiting={FadeOut.duration(400)}
+    >
       <SafeAreaView style={styles.safeArea}>
         {isLoading ? (
           <View style={styles.loadingContainer}>
@@ -59,7 +75,7 @@ export default function SignIn() {
           </View>
         )}
       </SafeAreaView>
-    </View>
+    </Animated.View>
   );
 }
 
