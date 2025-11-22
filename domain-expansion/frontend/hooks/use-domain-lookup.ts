@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { TldParser } from '@onsol/tldparser';
-import { PublicKey } from '@solana/web3.js';
-import { useConnection } from '@/components/solana/solana-provider';
+
+const API_BASE_URL = 'http://10.0.2.2:3000';
 
 export type SearchMode = 'domain' | 'pubkey';
 
@@ -13,7 +12,6 @@ export interface DomainLookupResult {
 }
 
 export function useDomainLookup() {
-  const connection = useConnection();
   const [result, setResult] = useState<DomainLookupResult>({
     input: '',
     result: null,
@@ -25,43 +23,34 @@ export function useDomainLookup() {
     setResult({ input: domain, result: null, error: null, isLoading: true });
 
     try {
-      console.log('[Domain Lookup] Creating TldParser...');
-      // Explicitly specify 'solana' chain for the parser
-      const parser = new TldParser(connection, 'solana');
-      console.log('[Domain Lookup] Parser created, calling getOwnerFromDomainTld...');
-      console.log('[Domain Lookup] Domain input:', domain);
+      console.log('[Domain Lookup] Calling backend API...');
+      const response = await fetch(`${API_BASE_URL}/api/resolve-domain`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ domain }),
+      });
 
-      // Add timeout wrapper
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Request timed out after 10s')), 10000)
-      );
+      const data = await response.json();
 
-      const owner = await Promise.race([
-        parser.getOwnerFromDomainTld(domain),
-        timeoutPromise
-      ]) as PublicKey | string | undefined;
-
-      console.log('[Domain Lookup] Owner result:', owner);
-
-      if (owner) {
-        const ownerAddress = typeof owner === 'string' ? owner : (owner as PublicKey).toBase58();
+      if (response.ok) {
+        console.log('[Domain Lookup] Found address:', data.address);
         setResult({
           input: domain,
-          result: ownerAddress,
+          result: data.address,
           error: null,
           isLoading: false,
         });
       } else {
+        console.log('[Domain Lookup] Error:', data.error);
         setResult({
           input: domain,
           result: null,
-          error: 'Domain not found',
+          error: data.error || 'Domain not found',
           isLoading: false,
         });
       }
     } catch (error: any) {
-      console.error('[Domain Lookup] Error caught:', error);
-      console.error('[Domain Lookup] Error stack:', error.stack);
+      console.error('[Domain Lookup] Network error:', error);
       setResult({
         input: domain,
         result: null,
@@ -75,51 +64,34 @@ export function useDomainLookup() {
     setResult({ input: pubkey, result: null, error: null, isLoading: true });
 
     try {
-      console.log('[Reverse Lookup] Creating TldParser...');
-      // Explicitly specify 'solana' chain for the parser
-      const parser = new TldParser(connection);
-      console.log('[Reverse Lookup] Parser created');
+      console.log('[Reverse Lookup] Calling backend API...');
+      const response = await fetch(`${API_BASE_URL}/api/resolve-address`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address: pubkey }),
+      });
 
-      console.log('[Reverse Lookup] Creating PublicKey from:', pubkey);
-      const publicKey = new PublicKey(pubkey);
-      console.log('[Reverse Lookup] PublicKey created:', publicKey.toBase58());
+      const data = await response.json();
 
-      console.log('[Reverse Lookup] Calling getParsedAllUserDomainsFromTld for .skr...');
-
-      // Add timeout wrapper - the Promise never resolves in React Native
-      const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Reverse lookup timed out - library may not support React Native')), 10000)
-      );
-
-      // Only search .skr TLD
-      const domains = await Promise.race([
-        parser.getParsedAllUserDomainsFromTld(publicKey, 'skr'),
-        timeoutPromise
-      ]);
-      console.log('[Reverse Lookup] Result:', domains);
-
-      if (domains && domains.length > 0) {
-        // Get the first domain's name
-        const domainName = domains[0].domain;
-        console.log('[Reverse Lookup] Found domain:', domainName);
+      if (response.ok) {
+        console.log('[Reverse Lookup] Found domain:', data.domain);
         setResult({
           input: pubkey,
-          result: domainName,
+          result: data.domain,
           error: null,
           isLoading: false,
         });
       } else {
-        console.log('[Reverse Lookup] No domains found');
+        console.log('[Reverse Lookup] Error:', data.error);
         setResult({
           input: pubkey,
           result: null,
-          error: 'No .skr domains found for this public key',
+          error: data.error || 'No .skr domains found for this public key',
           isLoading: false,
         });
       }
     } catch (error: any) {
-      console.error('[Reverse Lookup] Error caught:', error);
-      console.error('[Reverse Lookup] Error stack:', error.stack);
+      console.error('[Reverse Lookup] Network error:', error);
       setResult({
         input: pubkey,
         result: null,
@@ -144,4 +116,27 @@ export function useDomainLookup() {
     searchPublicKey,
     reset,
   };
+}
+
+// Helper function to resolve address to domain (for welcome message)
+export async function resolveAddressToDomain(address: string): Promise<string | null> {
+  try {
+    console.log('[resolveAddressToDomain] Fetching domain for:', address);
+    const response = await fetch(`${API_BASE_URL}/api/resolve-address`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ address }),
+    });
+
+    const data = await response.json();
+    console.log('[resolveAddressToDomain] Response:', response.status, data);
+
+    if (response.ok) {
+      return data.domain;
+    }
+    return null;
+  } catch (error) {
+    console.error('[resolveAddressToDomain] Error:', error);
+    return null;
+  }
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   TextInput,
@@ -12,21 +12,57 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
 import { AppText } from '@/components/app-text';
-import { useDomainLookup, SearchMode } from '@/hooks/use-domain-lookup';
+import { useDomainLookup, SearchMode, resolveAddressToDomain } from '@/hooks/use-domain-lookup';
 import { useAuth } from '@/components/auth/auth-provider';
 import { router, Redirect } from 'expo-router';
-import Animated, { FadeIn, FadeInDown, FadeInUp, SlideInDown, SlideInUp } from 'react-native-reanimated';
+import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
+import { ellipsify } from '@/utils/ellipsify';
 
 export default function Index() {
-  const { isAuthenticated, signOut } = useAuth();
+  const { isAuthenticated, signOut, selectedAccount } = useAuth();
   const [searchMode, setSearchMode] = useState<SearchMode>('domain');
   const [inputValue, setInputValue] = useState('');
   const [copied, setCopied] = useState(false);
+  const [userDomain, setUserDomain] = useState<string | null>(null);
+  const [isLoadingDomain, setIsLoadingDomain] = useState(true);
   const { result, searchDomain, searchPublicKey } = useDomainLookup();
+
+  // Fetch user's .skr domain on mount
+  useEffect(() => {
+    if (selectedAccount?.publicKey) {
+      setIsLoadingDomain(true);
+      const pubkeyStr = selectedAccount.publicKey.toBase58();
+      resolveAddressToDomain(pubkeyStr)
+        .then(setUserDomain)
+        .finally(() => setIsLoadingDomain(false));
+    }
+  }, [selectedAccount?.publicKey]);
 
   if (!isAuthenticated) {
     return <Redirect href="/sign-in" />;
   }
+
+  // Show loading screen while fetching domain
+  if (isLoadingDomain) {
+    return (
+      <View style={styles.loadingContainer}>
+        <LinearGradient
+          colors={['#9333ea', '#a855f7', '#c084fc']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.loadingGradient}
+        >
+          <ActivityIndicator size="large" color="#ffffff" />
+        </LinearGradient>
+      </View>
+    );
+  }
+
+  // Display name: domain if available, otherwise truncated pubkey
+  const displayName = userDomain
+    || (selectedAccount?.publicKey
+        ? ellipsify(selectedAccount.publicKey.toBase58(), 4)
+        : 'User');
 
   const handleSearch = () => {
     if (!inputValue.trim()) return;
@@ -68,8 +104,8 @@ export default function Index() {
             >
               <View style={styles.headerTop}>
                 <View>
-                  <AppText style={styles.title}>Domain Lookup</AppText>
-                  <AppText style={styles.subtitle}>Solana Name Service</AppText>
+                  <AppText style={styles.welcomeText}>Welcome,</AppText>
+                  <AppText style={styles.title}>{displayName}</AppText>
                 </View>
                 <Pressable style={styles.logoutButton} onPress={handleDisconnect}>
                   <AppText style={styles.logoutText}>Sign Out</AppText>
@@ -215,6 +251,14 @@ export default function Index() {
 }
 
 const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+  },
+  loadingGradient: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
   },
@@ -237,17 +281,17 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'flex-start',
   },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#ffffff',
-    letterSpacing: -0.5,
-  },
-  subtitle: {
+  welcomeText: {
     fontSize: 14,
     color: '#f3e8ff',
     fontWeight: '500',
-    marginTop: 4,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#ffffff',
+    letterSpacing: -0.5,
+    marginTop: 2,
   },
   logoutButton: {
     paddingHorizontal: 14,

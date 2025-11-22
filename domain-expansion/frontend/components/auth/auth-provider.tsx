@@ -9,6 +9,7 @@ export interface AuthState {
   isLoading: boolean
   signIn: () => Promise<Account>
   signOut: () => Promise<void>
+  selectedAccount: Account | null
 }
 
 const Context = createContext<AuthState>({} as AuthState)
@@ -35,7 +36,7 @@ function useSignInMutation() {
 
 export function AuthProvider({ children }: PropsWithChildren) {
   const { disconnect } = useMobileWallet()
-  const { accounts, isLoading } = useAuthorization()
+  const { accounts, isLoading, selectedAccount } = useAuthorization()
   const signInMutation = useSignInMutation()
 
   const value: AuthState = useMemo(
@@ -44,8 +45,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
       signOut: async () => await disconnect(),
       isAuthenticated: (accounts?.length ?? 0) > 0,
       isLoading: signInMutation.isPending || isLoading,
+      selectedAccount,
     }),
-    [accounts, disconnect, signInMutation, isLoading],
+    [accounts, disconnect, signInMutation, isLoading, selectedAccount],
   )
 
   return <Context value={value}>{children}</Context>
