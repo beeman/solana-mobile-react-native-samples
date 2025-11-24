@@ -2,6 +2,8 @@
 
 This directory contains README templates for the react-native-samples repository.
 
+**Important:** All sample apps in this repository are **Android only**. Do not include iOS-specific instructions, commands, or references in any documentation.
+
 ## Three-Tier Documentation Structure
 
 Sample apps should follow a three-tier documentation structure:

@@ -2,6 +2,8 @@
 
 > One or two sentence description of what the app does and its primary purpose.
 
+**Note:** This sample app is for **Android only**. Do not include iOS-specific instructions or references.
+
 ## What is this?
 
 [App Name] is a **demo application** showcasing [main technology/integration]. It demonstrates [key use case or feature].
@@ -46,25 +48,20 @@ app-name/
 cd frontend
 npm install
 
-# Configure environment
-# [Brief config instructions]
-
 npx expo prebuild --clean  # If native modules required
 npx expo run:android
 ```
 
-**Important:** [Any critical setup notes, e.g., "Requires development build due to native dependencies"]
+**Important:** [Any critical setup notes, e.g., "Requires development build due to native dependencies"]. Android only.
 
 **Documentation:**
 - [README.md](frontend/README.md) - Comprehensive setup and usage guide
-- [TECHNICAL-GUIDE.md](frontend/TECHNICAL-GUIDE.md) - _(Optional)_ Deep dive into implementation
 
 ## Backend
 
 **Tech Stack:**
 - [Backend framework - Node.js + Express, Firebase, etc.]
 - [Database - SQLite, PostgreSQL, MongoDB, etc.]
-- [Auth method - JWT, OAuth, etc.]
 
 **Setup:**
 ```bash
@@ -74,9 +71,6 @@ npm install
 # Initialize database (if applicable)
 npm run init-db
 
-# Optional: Add demo data
-npm run seed
-
 # Start server
 npm start  # Runs on port XXXX
 ```
@@ -84,51 +78,6 @@ npm start  # Runs on port XXXX
 **API Endpoints:**
 - [Category 1]: `/api/[route]/*`
 - [Category 2]: `/api/[route]/*`
-- [Category 3]: `/api/[route]/*`
 
 **Documentation:**
 - [README.md](backend/README.md) - Detailed API documentation and setup
-
----
-
-## Quick Start (All-in-One)
-
-**1. Clone and Install:**
-```bash
-git clone [repo-url]
-cd [app-name]
-
-# Install all dependencies
-cd frontend && npm install && cd ..
-cd backend && npm install && cd ..
-```
-
-**2. Configure:**
-```bash
-# Frontend
-cd frontend
-cp .env.example .env
-# Edit .env with your configuration
-
-# Backend (if needed)
-cd ../backend
-cp .env.example .env
-```
-
-**3. Run:**
-```bash
-# Terminal 1 - Backend
-cd backend
-npm start
-
-# Terminal 2 - Frontend
-cd frontend
-npx expo prebuild --clean  # First time only
-npx expo run:android
-```
-
----
-
-## License
-
-MIT License - See [LICENSE](../LICENSE) for details

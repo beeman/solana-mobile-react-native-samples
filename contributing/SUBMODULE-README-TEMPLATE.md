@@ -4,6 +4,8 @@
 
 **Tech Stack:** React Native, Expo, [Key Technologies]
 
+**Note:** Android only. Do not include iOS-specific instructions.
+
 📖 **[View Technical Deep Dive →](TECHNICAL-GUIDE.md)** _(optional, for complex implementations)_
 
 ## Features
@@ -42,9 +44,6 @@ npx expo prebuild --clean
 
 # Run on Android
 npx expo run:android
-
-# For development with hot reload
-npm start
 ```
 
 ---
