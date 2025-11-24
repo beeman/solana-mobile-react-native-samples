@@ -3,7 +3,7 @@ import { Cluster } from '@/components/cluster/cluster'
 import { ClusterNetwork } from '@/components/cluster/cluster-network'
 
 export class AppConfig {
-  static name = 'dotskr demo'
+  static name = '.skr address resolution'
   static uri = 'https://skrdemo.app'
   static clusters: Cluster[] = [
     {

@@ -83,9 +83,6 @@ export default function SignIn() {
                 </LinearGradient>
               </Pressable>
 
-              <AppText style={styles.helperText}>
-                Connect with Phantom, Solflare, or any Solana wallet
-              </AppText>
             </View>
           </View>
         )}
@@ -163,12 +160,5 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '700',
     letterSpacing: 0.3,
-  },
-  helperText: {
-    textAlign: 'center',
-    color: '#64748b',
-    fontSize: 13,
-    marginTop: 8,
-    fontStyle: 'italic',
   },
 });

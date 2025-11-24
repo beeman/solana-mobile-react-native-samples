@@ -81,6 +81,7 @@ export default function Index() {
   }
 
   // Display name: domain if available, otherwise truncated pubkey
+  const hasDomain = !!userDomain;
   const displayName = userDomain
     || (selectedAccount?.publicKey
         ? ellipsify(selectedAccount.publicKey.toBase58(), 4)
@@ -125,9 +126,14 @@ export default function Index() {
               entering={FadeInDown.duration(600).delay(100)}
             >
               <View style={styles.headerTop}>
-                <View>
+                <View style={styles.headerLeft}>
                   <AppText style={styles.welcomeText}>Welcome,</AppText>
-                  <AppText style={styles.title}>{displayName}</AppText>
+                  <AppText style={styles.displayName}>{displayName}</AppText>
+                  {!hasDomain && (
+                    <AppText style={styles.noSkrHint}>
+                      No .skr domain linked to this wallet
+                    </AppText>
+                  )}
                 </View>
                 <Pressable style={styles.logoutButton} onPress={handleDisconnect}>
                   <AppText style={styles.logoutText}>Sign Out</AppText>
@@ -296,16 +302,30 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'flex-start',
   },
+  headerLeft: {
+    flex: 1,
+    gap: 4,
+  },
+  welcomeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+  },
   welcomeText: {
     fontSize: 14,
     color: '#f3e8ff',
     fontWeight: '500',
   },
-  title: {
+  displayName: {
     fontSize: 24,
     fontWeight: '700',
     color: '#ffffff',
-    letterSpacing: -0.5,
+    marginTop: 2,
+  },
+  noSkrHint: {
+    fontSize: 11,
+    color: 'rgba(255, 255, 255, 0.7)',
+    fontStyle: 'italic',
     marginTop: 2,
   },
   logoutButton: {

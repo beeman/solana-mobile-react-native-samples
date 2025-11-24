@@ -1,8 +1,10 @@
-# Frontend - dotskr demo
+# Frontend - .skr address resolution
 
 > React Native mobile app for .skr domain lookup with Solana wallet integration.
 
 **Tech Stack:** React Native, Expo SDK 54, TypeScript, Solana Mobile Wallet Adapter
+
+**Template:** This project was bootstrapped using the [Solana Expo Template](https://templates.solana.com/web3js-expo)
 
 ## Features
 

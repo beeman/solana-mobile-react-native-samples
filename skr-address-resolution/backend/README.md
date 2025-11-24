@@ -1,4 +1,4 @@
-# Backend - dotskr demo
+# Backend - .skr address resolution
 
 > Express API server for .skr domain resolution using the Solana Name Service.
 

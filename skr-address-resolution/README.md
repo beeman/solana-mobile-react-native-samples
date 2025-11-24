@@ -1,10 +1,10 @@
-# dotskr demo
+# .skr address resolution
 
 > A Solana Name Service lookup app for resolving .skr domain names to wallet addresses and vice versa.
 
 ## What is this?
 
-dotskr demo is a **demo application** showcasing Solana Name Service (SNS) integration with React Native mobile apps. It demonstrates bidirectional domain lookup using the Solana blockchain.
+.skr address resolution is a **demo application** showcasing Solana Name Service (SNS) integration with React Native mobile apps. It demonstrates bidirectional domain lookup using the Solana blockchain.
 
 ## Screenshots & Demo
 
@@ -29,7 +29,7 @@ dotskr demo is a **demo application** showcasing Solana Name Service (SNS) integ
 ## Project Structure
 
 ```
-dotskr-demo/
+skr-address-resolution/
 ├── frontend/     # React Native mobile app
 └── backend/      # Express API for domain resolution
 ```
