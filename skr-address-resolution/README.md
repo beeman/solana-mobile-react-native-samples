@@ -18,7 +18,7 @@
 
 **Key Features:**
 - Personalized welcome with user's .skr domain or truncated wallet address
-- Wallet-based authentication (Solana Mobile Wallet Adapter)
+- Wallet-based authentication via @wallet-ui/react-native-web3js
 - Domain to address lookup aka `example.skr` → wallet address
 - Address to domain reverse lookup aka wallet address → `example.skr`
 
@@ -122,7 +122,7 @@ if (domains && domains.length > 0) {
 - React Native + Expo (SDK 54)
 - TypeScript
 - Expo Router (file-based navigation)
-- Solana Mobile Wallet Adapter
+- @wallet-ui/react-native-web3js
 
 **Setup:**
 ```bash
@@ -133,7 +133,7 @@ npx expo prebuild --clean  # Required for native modules
 npx expo run:android
 ```
 
-**Important:** Requires a development build (not Expo Go) due to native Solana Mobile Wallet Adapter dependencies.
+**Important:** Requires a development build (not Expo Go) due to native wallet adapter dependencies.
 
 **Documentation:**
 - [README.md](frontend/README.md) - Comprehensive setup and usage guide

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { router, Redirect } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useAuth } from '@/components/auth/auth-provider';
+import { useMobileWalletAdapter } from '@wallet-ui/react-native-web3js';
 import { AppText } from '@/components/app-text';
 import { AppConfig } from '@/constants/app-config';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -11,10 +11,11 @@ import { AnimatedSplash } from '@/components/animated-splash';
 import Toast from 'react-native-toast-message';
 
 export default function SignIn() {
-  const { signIn, isLoading, isAuthenticated } = useAuth();
+  const { account, connect } = useMobileWalletAdapter();
+  const [isLoading, setIsLoading] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
 
-  if (isAuthenticated) {
+  if (account) {
     return <Redirect href="/" />;
   }
 
@@ -55,8 +56,9 @@ export default function SignIn() {
               <Pressable
                 style={styles.connectButton}
                 onPress={async () => {
+                  setIsLoading(true);
                   try {
-                    await signIn();
+                    await connect();
                     router.replace('/');
                   } catch (error: any) {
                     // Don't show error for user cancellation
@@ -70,6 +72,8 @@ export default function SignIn() {
                         visibilityTime: 4000,
                       });
                     }
+                  } finally {
+                    setIsLoading(false);
                   }
                 }}
               >

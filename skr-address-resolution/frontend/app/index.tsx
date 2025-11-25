@@ -13,14 +13,14 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
 import { AppText } from '@/components/app-text';
 import { useDomainLookup, SearchMode, resolveAddressToDomain } from '@/hooks/use-domain-lookup';
-import { useAuth } from '@/components/auth/auth-provider';
+import { useMobileWalletAdapter } from '@wallet-ui/react-native-web3js';
 import { router, Redirect } from 'expo-router';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { ellipsify } from '@/utils/ellipsify';
 import Toast from 'react-native-toast-message';
 
 export default function Index() {
-  const { isAuthenticated, signOut, selectedAccount } = useAuth();
+  const { account, disconnect } = useMobileWalletAdapter();
   const [searchMode, setSearchMode] = useState<SearchMode>('domain');
   const [inputValue, setInputValue] = useState('');
   const [copied, setCopied] = useState(false);
@@ -30,14 +30,14 @@ export default function Index() {
 
   // Fetch user's .skr domain on mount
   useEffect(() => {
-    if (selectedAccount?.publicKey) {
+    if (account?.publicKey) {
       setIsLoadingDomain(true);
-      const pubkeyStr = selectedAccount.publicKey.toBase58();
+      const pubkeyStr = account.publicKey.toString();
       resolveAddressToDomain(pubkeyStr)
         .then(setUserDomain)
         .finally(() => setIsLoadingDomain(false));
     }
-  }, [selectedAccount?.publicKey]);
+  }, [account?.publicKey]);
 
   // Show toast notifications for search results
   useEffect(() => {
@@ -60,7 +60,7 @@ export default function Index() {
     }
   }, [result.error, result.result]);
 
-  if (!isAuthenticated) {
+  if (!account) {
     return <Redirect href="/sign-in" />;
   }
 
@@ -83,8 +83,8 @@ export default function Index() {
   // Display name: domain if available, otherwise truncated pubkey
   const hasDomain = !!userDomain;
   const displayName = userDomain
-    || (selectedAccount?.publicKey
-        ? ellipsify(selectedAccount.publicKey.toBase58(), 4)
+    || (account?.publicKey
+        ? ellipsify(account.publicKey.toString(), 4)
         : 'User');
 
   const handleSearch = () => {
@@ -98,7 +98,7 @@ export default function Index() {
   };
 
   const handleDisconnect = async () => {
-    await signOut();
+    await disconnect();
     router.replace('/sign-in');
   };
 
