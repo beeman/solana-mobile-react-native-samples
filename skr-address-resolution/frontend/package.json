@@ -15,7 +15,7 @@
     "ios": "expo run:ios"
   },
   "displayName": "dotskr demo",
-  "description": "A Solana Name Service lookup app for .skr domains.",
+  "description": "An AllDomains lookup app for .skr domains.",
   "usecase": "Mobile",
   "keywords": [
     "expo",

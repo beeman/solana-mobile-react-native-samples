@@ -1,6 +1,6 @@
 # Backend - .skr address resolution
 
-> Express API server for .skr domain resolution using the Solana Name Service.
+> Express API server for .skr domain resolution using AllDomains.
 
 **Tech Stack:** Node.js, Express, TypeScript, @onsol/tldparser, Solana Web3.js
 
@@ -144,7 +144,7 @@ backend/
 
 ### Domain Resolution
 
-Uses `@onsol/tldparser` to resolve .skr domains via the Solana Name Service. The parser connects to Solana mainnet to query domain ownership records.
+Uses `@onsol/tldparser` to resolve .skr domains via AllDomains. The parser connects to Solana mainnet to query domain ownership records.
 
 **Files:** [src/index.ts](src/index.ts)
 
@@ -223,9 +223,10 @@ curl -X POST http://localhost:3000/api/resolve-address \
 - [@onsol/tldparser](https://www.npmjs.com/package/@onsol/tldparser)
 - [Solana Web3.js](https://solana-labs.github.io/solana-web3.js/)
 
-### Solana Name Service
-- [SNS Documentation](https://docs.bonfida.org/collection/an-introduction-to-the-solana-name-service)
+### Domain Resolution
+- [AllDomains Developer Guide](https://docs.alldomains.id/protocol/developer-guide/ad-sdks/svm-sdks/solana-mainnet-sdk) - Official Solana SDK documentation
 - [AllDomains](https://alldomains.id/) - .skr domain registry
+- [@onsol/tldparser Documentation](https://www.npmjs.com/package/@onsol/tldparser) - Library for domain lookups
 
 ---
 

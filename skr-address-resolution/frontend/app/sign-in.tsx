@@ -47,7 +47,7 @@ export default function SignIn() {
                 resizeMode="contain"
               />
               <AppText style={styles.title}>{AppConfig.name}</AppText>
-              <AppText style={styles.subtitle}>Solana Name Service</AppText>
+              <AppText style={styles.subtitle}>AllDomains Lookup</AppText>
             </View>
 
             {/* Bottom Section - Connect Button */}

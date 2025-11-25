@@ -1,10 +1,10 @@
 # .skr address resolution
 
-> A Solana Name Service lookup app for resolving .skr domain names to wallet addresses and vice versa.
+> An AllDomains lookup app for resolving .skr domain names to wallet addresses and vice versa.
 
 ## What is this?
 
-.skr address resolution is a **demo application** showcasing Solana Name Service (SNS) integration with React Native mobile apps. It demonstrates bidirectional domain lookup using the Solana blockchain.
+.skr address resolution is a **demo application** showcasing AllDomains integration with React Native mobile apps. It demonstrates bidirectional domain lookup using the Solana blockchain and the `@onsol/tldparser` library.
 
 ## Screenshots & Demo
 
@@ -29,6 +29,92 @@ skr-address-resolution/
 ├── frontend/     # React Native mobile app
 └── backend/      # Express API for domain resolution
 ```
+
+## .skr Address Resolution
+
+Each Seeker owner has a `.skr` domain tied to their primary wallet. You can query this onchain using the `@onsol/tldparser` library, which provides methods for both domain-to-address and address-to-domain lookups.
+
+### How It Works
+
+This app demonstrates the complete resolution flow:
+
+1. **User Authentication**
+   - User connects their Solana wallet via Mobile Wallet Adapter
+   - App receives the wallet's public key after authorization
+
+2. **Personalized Welcome (Address → Domain)**
+   - Frontend sends user's public key to backend `/api/resolve-address`
+   - Backend queries Solana mainnet using `parser.getParsedAllUserDomainsFromTld(publicKey, 'skr')`
+   - Returns first `.skr` domain found, or 404 if none exists
+   - Frontend displays domain name or truncated address as fallback
+
+3. **Search Functionality**
+   - **Domain Lookup:** User enters `example.skr` → backend calls `parser.getOwnerFromDomainTld(domain)` → returns wallet address
+   - **Address Lookup:** User enters wallet address → backend calls `parser.getParsedAllUserDomainsFromTld(publicKey, 'skr')` → returns `.skr` domain
+
+All resolution logic happens server-side to keep RPC calls secure and efficient.
+
+### Domain to Address Lookup
+
+Resolve a `.skr` domain (e.g., `example.skr`) to its owner's wallet address:
+
+```typescript
+import { Connection, PublicKey } from '@solana/web3.js';
+import { TldParser } from '@onsol/tldparser';
+
+const connection = new Connection('https://api.mainnet-beta.solana.com');
+const parser = new TldParser(connection);
+
+// Look up domain owner
+const domain = 'example.skr';
+const owner = await parser.getOwnerFromDomainTld(domain);
+
+if (owner) {
+  const ownerAddress = owner.toBase58();
+  console.log(`${domain} belongs to ${ownerAddress}`);
+} else {
+  console.log('Domain not found');
+}
+```
+
+**Implementation:** [backend/src/index.ts:22-46](backend/src/index.ts#L22-L46)
+
+### Address to Domain Lookup (Reverse Lookup)
+
+Resolve a wallet address to its associated `.skr` domain:
+
+```typescript
+import { Connection, PublicKey } from '@solana/web3.js';
+import { TldParser } from '@onsol/tldparser';
+
+const connection = new Connection('https://api.mainnet-beta.solana.com');
+const parser = new TldParser(connection);
+
+// Look up user's .skr domain
+const walletAddress = new PublicKey('YourWalletAddressHere');
+const domains = await parser.getParsedAllUserDomainsFromTld(walletAddress, 'skr');
+
+if (domains && domains.length > 0) {
+  const domainName = domains[0].domain;
+  console.log(`Address has .skr domain: ${domainName}`);
+} else {
+  console.log('No .skr domain found for this address');
+}
+```
+
+**Implementation:** [backend/src/index.ts:48-76](backend/src/index.ts#L48-L76)
+
+### Key Points
+
+- **Library:** `@onsol/tldparser` handles all AllDomains lookups
+- **Connection:** Requires a Solana RPC connection (mainnet-beta for production)
+- **TLD Filtering:** Use `getParsedAllUserDomainsFromTld(publicKey, 'skr')` to specifically query `.skr` domains
+- **Multiple Domains:** A wallet can own multiple domains; this demo uses the first one found
+
+### Resources
+
+- [AllDomains Developer Guide](https://docs.alldomains.id/protocol/developer-guide/ad-sdks/svm-sdks/solana-mainnet-sdk) - Official documentation for Solana SDK
+- [@onsol/tldparser NPM Package](https://www.npmjs.com/package/@onsol/tldparser) - Domain resolution library
 
 ## Frontend
 
