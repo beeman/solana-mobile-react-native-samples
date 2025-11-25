@@ -2,14 +2,14 @@
 
 > React Native mobile app for .skr domain lookup with Solana wallet integration.
 
-**Tech Stack:** React Native, Expo SDK 54, TypeScript, Solana Mobile Wallet Adapter
+**Tech Stack:** React Native, Expo SDK 54, TypeScript, @wallet-ui/react-native-web3js
 
 **Template:** This project was bootstrapped using the [Solana Expo Template](https://templates.solana.com/web3js-expo)
 
 ## Features
 
 - Personalized welcome message with user's .skr domain or truncated wallet address
-- Secure wallet authentication via Solana Mobile Wallet Adapter
+- Secure wallet authentication via Mobile Wallet Adapter
 - Domain to address lookup (e.g., `example.skr` → wallet address)
 - Address to domain reverse lookup
 
@@ -41,7 +41,7 @@ npx expo prebuild --clean
 npx expo run:android
 ```
 
-**Important:** This app requires a development build due to native dependencies (Solana Mobile Wallet Adapter). Expo Go is not supported.
+**Important:** This app requires a development build due to native dependencies (@wallet-ui/react-native-web3js). Expo Go is not supported.
 
 ---
 
@@ -85,22 +85,14 @@ frontend/
 │   ├── index.tsx                 # Main screen (domain lookup)
 │   └── sign-in.tsx               # Wallet connection screen
 ├── components/
-│   ├── auth/
-│   │   └── auth-provider.tsx     # Authentication context
-│   ├── solana/
-│   │   ├── solana-provider.tsx   # Solana connection provider
-│   │   ├── use-authorization.tsx # Wallet authorization hook
-│   │   └── use-mobile-wallet.tsx # Mobile wallet adapter hook
-│   ├── cluster/
-│   │   └── cluster-provider.tsx  # Solana cluster configuration
 │   ├── animated-splash.tsx       # Lottie splash animation
-│   ├── app-providers.tsx         # Combined providers wrapper
+│   ├── app-providers.tsx         # Providers wrapper (MobileWalletAdapterProvider)
 │   ├── app-text.tsx              # Custom text component
 │   └── app-theme.tsx             # Theme configuration
 ├── hooks/
 │   └── use-domain-lookup.ts      # Domain resolution API calls ⭐
 ├── constants/
-│   └── app-config.ts             # App configuration
+│   └── app-config.ts             # App configuration (cluster, identity)
 ├── utils/
 │   └── ellipsify.ts              # String truncation utility
 ├── assets/
@@ -115,9 +107,14 @@ frontend/
 
 ### Wallet Authentication
 
-Uses Solana Mobile Wallet Adapter for secure wallet connections. The auth state is persisted in AsyncStorage and managed via React Context.
+Uses `@wallet-ui/react-native-web3js` for secure wallet connections via Mobile Wallet Adapter. The library handles auth state management, persistence, and wallet communication automatically.
 
-**Files:** [components/auth/auth-provider.tsx](components/auth/auth-provider.tsx), [components/solana/use-authorization.tsx](components/solana/use-authorization.tsx)
+Components use the `useMobileWalletAdapter()` hook directly to access:
+- `account` - Connected wallet account with publicKey
+- `connect()` - Function to initiate wallet connection
+- `disconnect()` - Function to disconnect wallet
+
+**Files:** [app/sign-in.tsx](app/sign-in.tsx), [app/index.tsx](app/index.tsx), [components/app-providers.tsx](components/app-providers.tsx)
 
 ### Domain Resolution
 
@@ -189,7 +186,11 @@ npx expo run:android
 - [Expo Documentation](https://docs.expo.dev/)
 - [Expo Router](https://docs.expo.dev/router/introduction/)
 - [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/)
-- [Solana Mobile Wallet Adapter](https://docs.solanamobile.com/react-native/overview)
+- [@wallet-ui/react-native-web3js](https://github.com/beeman/web3js-epxo-wallet-ui) - Example implementation
+
+### Wallet Integration
+- [Solana Mobile Wallet Adapter Docs](https://docs.solanamobile.com/react-native/overview)
+- [Wallet UI Documentation](https://wallet-ui-docs-git-beeman-react-native-web3js-docs-wallet-ui.vercel.app/docs/react-native-web3js)
 
 ### Solana Development
 - [Solana Web3.js](https://solana-labs.github.io/solana-web3.js/)

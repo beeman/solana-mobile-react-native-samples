@@ -1,21 +1,24 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { PropsWithChildren } from 'react'
-import { ClusterProvider } from './cluster/cluster-provider'
-import { SolanaProvider } from '@/components/solana/solana-provider'
+import { MobileWalletAdapterProvider } from '@wallet-ui/react-native-web3js'
 import { AppTheme } from '@/components/app-theme'
-import { AuthProvider } from '@/components/auth/auth-provider'
+import { AppConfig } from '@/constants/app-config'
 
 const queryClient = new QueryClient()
 
 export function AppProviders({ children }: PropsWithChildren) {
+  const mainnetCluster = AppConfig.clusters[0]
+
   return (
     <AppTheme>
       <QueryClientProvider client={queryClient}>
-        <ClusterProvider>
-          <SolanaProvider>
-            <AuthProvider>{children}</AuthProvider>
-          </SolanaProvider>
-        </ClusterProvider>
+        <MobileWalletAdapterProvider
+          clusterId={mainnetCluster.id}
+          endpoint={mainnetCluster.endpoint}
+          identity={{ name: AppConfig.name }}
+        >
+          {children}
+        </MobileWalletAdapterProvider>
       </QueryClientProvider>
     </AppTheme>
   )
