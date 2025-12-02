@@ -12,11 +12,11 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { connectWallet } from '@/apis/auth';
-import { useMWA, getFriendlyErrorMessage } from '@/utils/mwa';
+import { useMobileWalletAdapter } from '@wallet-ui/react-native-web3js';
 import Toast from 'react-native-toast-message';
 
 export default function LoginScreen() {
-  const { selectedAccount, connect } = useMWA();
+  const { account, connect } = useMobileWalletAdapter();
   const [isConnecting, setIsConnecting] = useState(false);
   const [isCheckingSession, setIsCheckingSession] = useState(true);
 
@@ -27,12 +27,13 @@ export default function LoginScreen() {
 
   const checkCachedSession = async () => {
     try {
-      // Check if we have a cached authorization from AuthorizationProvider
-      if (selectedAccount) {
-        console.log('Found cached wallet session:', selectedAccount.address);
+      // Check if we have a cached account from MobileWalletAdapterProvider
+      if (account?.publicKey) {
+        const address = account.publicKey.toString();
+        console.log('Found cached wallet session:', address);
 
         // Connect to backend with cached wallet
-        const response = await connectWallet(selectedAccount.address);
+        const response = await connectWallet(address);
 
         if (response.success && response.data && !response.data.requiresProfileCompletion) {
           console.log('Session restored successfully');
@@ -55,12 +56,13 @@ export default function LoginScreen() {
       // Step 1: Authorize wallet using Mobile Wallet Adapter
       console.log('Requesting wallet authorization...');
 
-      const account = await connect();
+      const connectedAccount = await connect();
+      const address = connectedAccount.publicKey.toString();
 
-      console.log('Wallet authorized:', account.address);
+      console.log('Wallet authorized:', address);
 
       // Step 2: Connect to backend with the wallet address
-      const response = await connectWallet(account.address);
+      const response = await connectWallet(address);
 
       if (response.success && response.data) {
         console.log('Backend connection successful:', response.data);
@@ -92,8 +94,8 @@ export default function LoginScreen() {
     } catch (error: any) {
       console.error('Wallet connection error:', error);
 
-      // Use friendly error message from MWA utils
-      const errorMessage = getFriendlyErrorMessage(error);
+      // Display error message
+      const errorMessage = error.message || 'Failed to connect wallet';
 
       Toast.show({
         type: 'error',

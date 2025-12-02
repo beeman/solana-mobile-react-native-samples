@@ -74,8 +74,8 @@ settle/
 - React Native + Expo (SDK 52)
 - TypeScript
 - Expo Router (file-based navigation)
-- Solana Mobile Wallet Adapter
-- @solana/web3.js v1.98.4
+- Wallet UI SDK (@wallet-ui/react-native-web3js)
+- @solana/web3.js
 
 **Setup:**
 ```bash

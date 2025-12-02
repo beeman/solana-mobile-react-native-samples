@@ -6,9 +6,8 @@ import {
   Transaction,
   LAMPORTS_PER_SOL,
 } from '@solana/web3.js';
-import { APP_IDENTITY, SOLANA_CLUSTER, SOLANA_RPC_ENDPOINT } from '@/constants/wallet';
-import { getStoredWalletAuth } from '@/apis/auth';
-import { isValidAddress, signWithWallet } from '@/utils/mwa';
+import { SOLANA_RPC_ENDPOINT } from '@/constants/wallet';
+import { isValidAddress } from '@/utils/address';
 
 const COINGECKO_PRICE_API = 'https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd';
 
@@ -56,20 +55,19 @@ export const convertSolToUsd = (amountInSol: number, solToUsdRate: number): numb
 
 /**
  * Send SOL to another wallet address
+ * @param fromAddress - Sender's wallet address (pubkey)
  * @param toAddress - Recipient's wallet address (pubkey)
  * @param amountInUsd - Amount in USD to send
+ * @param signAndSend - Function to sign and send the transaction
  * @returns Transaction signature if successful
  */
 export const sendSol = async (
+  fromAddress: string,
   toAddress: string,
-  amountInUsd: number
+  amountInUsd: number,
+  signAndSend: (transaction: Transaction) => Promise<Uint8Array>
 ): Promise<SendSolResult> => {
-  let cachedAuth = await getStoredWalletAuth();
-  if (!cachedAuth) {
-    throw new Error('No wallet connected. Please connect your wallet first.');
-  }
-
-  if (!isValidAddress(cachedAuth.address)) {
+  if (!isValidAddress(fromAddress)) {
     throw new Error('Your wallet address is invalid. Please reconnect your wallet.');
   }
 
@@ -88,7 +86,7 @@ export const sendSol = async (
 
   const connection = new Connection(SOLANA_RPC_ENDPOINT, 'confirmed');
 
-  const fromPubkey = new PublicKey(cachedAuth.address);
+  const fromPubkey = new PublicKey(fromAddress);
   const toPubkey = new PublicKey(toAddress);
 
   const lamports = Math.floor(amountInSol * LAMPORTS_PER_SOL);
@@ -116,21 +114,7 @@ export const sendSol = async (
   }).add(transferInstruction);
 
   try {
-    // Sign and send transaction using MWA utility (handles auth and retry automatically)
-    const signature = await signWithWallet(
-      async (wallet) => {
-        const signedTransactions = await wallet.signAndSendTransactions({
-          transactions: [transaction],
-        });
-        return signedTransactions[0];
-      },
-      {
-        cluster: SOLANA_CLUSTER,
-        identity: APP_IDENTITY,
-        authToken: cachedAuth.authToken,
-      }
-    );
-
+    const signature = await signAndSend(transaction);
     console.log('Transaction sent successfully:', signature);
 
     // Confirm transaction

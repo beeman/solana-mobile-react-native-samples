@@ -2,7 +2,7 @@
 
 > An expense splitting application with Solana wallet integration. Login with wallet, add friends, create groups, split expenses, and pay using SOL transfers.
 
-**Tech Stack:** React Native, Expo Router, Solana Mobile Wallet Adapter, Web3.js
+**Tech Stack:** React Native, Expo Router, Wallet UI SDK, Web3.js
 
 📖 **[View Technical Deep Dive →](TECHNICAL-GUIDE.md)**
 
@@ -64,7 +64,6 @@ EXPO_PUBLIC_SOLANA_RPC_ENDPOINT=https://api.devnet.solana.com
 React Native requires a crypto polyfill for Solana Web3.js. **Import it first** in [app/_layout.tsx](app/_layout.tsx):
 
 ```typescript
-// MUST be imported FIRST, before any @solana/web3.js imports
 import 'react-native-get-random-values';
 ```
 
@@ -81,26 +80,23 @@ Error: crypto.getRandomValues() not supported
 settle/frontend/
 ├── app/                      # Expo Router screens
 │   ├── (tabs)/              # Tab navigation (groups, friends, activity, account)
-│   ├── _layout.tsx          # Root layout (crypto polyfill here!)
+│   ├── _layout.tsx          # Root layout with wallet provider
 │   ├── login.tsx            # Wallet login screen
 │   ├── add-expense.tsx      # Add expense screen
-│   └── settle-up.tsx        # Payment screen
+│   └── balances.tsx         # Payment screen
 ├── utils/                   # Utility functions
-│   └── mwa/                 # MWA utility library ⭐
-│       ├── useMWA.ts        # Primary hook (unified MWA interface)
-│       ├── auth.ts          # Auth token caching
-│       ├── address.ts       # Address conversion utilities
-│       ├── errors.ts        # Error handling utilities
-│       ├── transact.ts      # Smart transact wrappers
-│       ├── types.ts         # TypeScript types
-│       └── index.ts         # Main exports
+│   ├── address.ts           # Address validation utilities
+│   ├── api-client.ts        # HTTP client
+│   ├── formatters.ts        # Data formatting
+│   └── validators.ts        # Input validation
 ├── solana/                  # Web3 integration
-│   ├── wallet.ts            # Wallet connection & authorization
 │   └── transaction.ts       # SOL transfers & transactions
 ├── apis/                    # API client functions
-│   └── auth.ts              # Wallet session persistence
+│   └── auth.ts              # Wallet session APIs
 ├── components/              # Reusable components
 │   ├── providers/           # React context providers
+│   │   ├── ConnectionProvider.tsx
+│   │   └── ThemeProvider.tsx
 │   └── hooks/               # Custom hooks
 └── constants/               # App constants
     └── wallet.ts            # Solana configuration
@@ -110,30 +106,27 @@ settle/frontend/
 
 ## Key Concepts
 
-### MWA Utility Library
-A unified hook (`useMWA()`) that provides all Mobile Wallet Adapter functionality in one import, replacing 3+ provider hooks and centralizing auth token caching, address conversion, and error handling.
+### Wallet Integration
 
-**Files:** [utils/mwa/](utils/mwa/) - See [utils/mwa/README.md](utils/mwa/README.md) for API documentation
+Uses `@wallet-ui/react-native-web3js` SDK for Mobile Wallet Adapter functionality, providing a unified hook (`useMobileWalletAdapter()`) for all wallet operations.
 
-### Wallet Connection
-Uses Mobile Wallet Adapter's `transact()` API with cached auth tokens for silent reauthorization, creating a web2-like UX while maintaining web3 security.
+**Files:** [app/_layout.tsx](app/_layout.tsx), [app/login.tsx](app/login.tsx)
 
-**Files:** [utils/mwa/useMWA.ts](utils/mwa/useMWA.ts), [utils/mwa/auth.ts](utils/mwa/auth.ts)
+### Address Validation
 
-### Address Encoding
-Wallet adapter returns addresses in base64 format, which are automatically converted to Solana's base58 standard (no ambiguous characters, URL-safe, human-readable).
+Simple utilities for validating Solana addresses before transactions.
 
-**Files:** [utils/mwa/address.ts](utils/mwa/address.ts)
+**Files:** [utils/address.ts](utils/address.ts)
 
 ### Transaction Signing
-SOL payments with automatic USD-to-SOL conversion using live CoinGecko prices. Includes auto-reauthorization and retry logic for expired auth tokens.
 
-**Files:** [solana/transaction.ts](solana/transaction.ts), [utils/mwa/useMWA.ts](utils/mwa/useMWA.ts)
+SOL payments with automatic USD-to-SOL conversion using live CoinGecko prices. The SDK handles authorization automatically.
+
+**Files:** [solana/transaction.ts](solana/transaction.ts), [app/balances.tsx](app/balances.tsx)
 
 ### Session Persistence
-Auth tokens are cached in AsyncStorage for seamless reauthorization across app restarts. Private keys never leave the wallet app—only revocable auth tokens and public addresses are stored.
 
-**Files:** [utils/mwa/auth.ts](utils/mwa/auth.ts)
+The Wallet UI SDK handles auth token persistence automatically across app restarts.
 
 ---
 
@@ -145,16 +138,6 @@ Auth tokens are cached in AsyncStorage for seamless reauthorization across app r
 1. Install: `npm install react-native-get-random-values`
 2. Import as **first line** in [app/_layout.tsx](app/_layout.tsx)
 3. Rebuild: `npx expo prebuild --clean && npx expo run:android`
-
-### Error: "Non-base58 character"
-
-**Solution:** Address is in base64 format. Use the `toBase58()` utility:
-```typescript
-import { toBase58 } from '@/utils/mwa';
-const base58Address = toBase58(address);
-```
-
-**Files:** [utils/mwa/address.ts](utils/mwa/address.ts)
 
 ### Error: "Transaction expired"
 
@@ -168,7 +151,6 @@ const base58Address = toBase58(address);
 
 ## Documentation
 
-- **[utils/mwa/README.md](utils/mwa/README.md)** - MWA Utility Library API reference
 - **[TECHNICAL-GUIDE.md](TECHNICAL-GUIDE.md)** - Comprehensive guide explaining all implementation details
 - **[Backend README](../backend/README.md)** - API server documentation
 
@@ -178,7 +160,7 @@ const base58Address = toBase58(address);
 
 ### Official Documentation
 - [Solana Mobile Docs](https://docs.solanamobile.com/react-native/overview)
-- [Mobile Wallet Adapter Spec](https://github.com/solana-mobile/mobile-wallet-adapter)
+- [Wallet UI SDK](https://github.com/beeman/web3js-expo-wallet-ui)
 - [Solana Web3.js Docs](https://solana-labs.github.io/solana-web3.js/)
 
 ### Developer Tools
@@ -188,6 +170,6 @@ const base58Address = toBase58(address);
 
 ### Sample Apps
 - [Solana Mobile dApp Scaffold](https://github.com/solana-mobile/solana-mobile-dapp-scaffold)
-- [Mobile Wallet Adapter Example](https://github.com/solana-mobile/mobile-wallet-adapter/tree/main/examples)
+- [Wallet UI Examples](https://github.com/beeman/web3js-expo-wallet-ui)
 
 ---

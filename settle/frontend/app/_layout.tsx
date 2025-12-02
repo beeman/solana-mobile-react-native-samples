@@ -1,4 +1,3 @@
-// IMPORTANT: Must be imported before @solana/web3.js to provide crypto.getRandomValues()
 import 'react-native-get-random-values';
 
 import { Montserrat_400Regular, Montserrat_500Medium, Montserrat_600SemiBold, Montserrat_700Bold, useFonts as useMontserrat } from '@expo-google-fonts/montserrat';
@@ -9,10 +8,14 @@ import { StatusBar } from 'expo-status-bar';
 import { Text as RNText, TextInput as RNTextInput } from 'react-native';
 import 'react-native-reanimated';
 
-import { ConnectionProvider, AuthorizationProvider, ThemeProvider } from '@/components/providers';
+import { ThemeProvider, ConnectionProvider } from '@/components/providers';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import Toast from 'react-native-toast-message';
-import { SOLANA_RPC_ENDPOINT } from '@/constants/wallet';
+import { SOLANA_RPC_ENDPOINT, SOLANA_CLUSTER } from '@/constants/wallet';
+import { MobileWalletAdapterProvider } from '@wallet-ui/react-native-web3js';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 export const unstable_settings = {
   anchor: 'login',
@@ -61,16 +64,24 @@ export default function RootLayout() {
   if (!RNTextInput.defaultProps) RNTextInput.defaultProps = {} as any;
   RNTextInput.defaultProps.style = [RNTextInput.defaultProps.style, { fontFamily: 'Poppins_400Regular' }];
 
+  const clusterId = `solana:${SOLANA_CLUSTER}` as const;
+
   return (
-    <ConnectionProvider
-      endpoint={SOLANA_RPC_ENDPOINT}
-      config={{ commitment: 'confirmed' }}
-    >
-      <AuthorizationProvider>
-        <ThemeProvider>
-          <RootLayoutInner />
-        </ThemeProvider>
-      </AuthorizationProvider>
-    </ConnectionProvider>
+    <QueryClientProvider client={queryClient}>
+      <MobileWalletAdapterProvider
+        clusterId={clusterId}
+        endpoint={SOLANA_RPC_ENDPOINT}
+        identity={{ name: 'Settle' }}
+      >
+        <ConnectionProvider
+          endpoint={SOLANA_RPC_ENDPOINT}
+          config={{ commitment: 'confirmed' }}
+        >
+          <ThemeProvider>
+            <RootLayoutInner />
+          </ThemeProvider>
+        </ConnectionProvider>
+      </MobileWalletAdapterProvider>
+    </QueryClientProvider>
   );
 }

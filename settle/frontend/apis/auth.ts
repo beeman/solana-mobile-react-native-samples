@@ -5,7 +5,6 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import apiClient, { saveAuthToken, clearAuthData } from '../utils/api-client';
-import { AuthCache } from '@/utils/mwa';
 
 export interface ConnectWalletData {
   pubkey: string;
@@ -83,25 +82,16 @@ export const completeProfile = async (data: CompleteProfileData): Promise<AuthRe
   }
 };
 
-/**
- * Store wallet authorization data in AsyncStorage
- */
 export const storeWalletAuth = async (authToken: string, address: string): Promise<void> => {
-  return AuthCache.storeWalletAuth(authToken, address);
+  // No-op
 };
 
-/**
- * Get stored wallet authorization data from AsyncStorage
- */
 export const getStoredWalletAuth = async (): Promise<{ authToken: string; address: string } | null> => {
-  return AuthCache.getStoredWalletAuth();
+  return null;
 };
 
-/**
- * Clear wallet authorization data from AsyncStorage
- */
 export const clearWalletAuth = async (): Promise<void> => {
-  return AuthCache.clearWalletAuth();
+  // No-op
 };
 
 /**
@@ -113,8 +103,6 @@ export const logout = async (): Promise<{ success: boolean; message: string }> =
 
     // Clear local auth data
     await clearAuthData();
-    // Clear wallet auth data
-    await clearWalletAuth();
 
     return response.data;
   } catch (error: any) {
@@ -122,7 +110,6 @@ export const logout = async (): Promise<{ success: boolean; message: string }> =
 
     // Clear local data anyway
     await clearAuthData();
-    await clearWalletAuth();
 
     return {
       success: true,
@@ -131,7 +118,6 @@ export const logout = async (): Promise<{ success: boolean; message: string }> =
   }
 };
 
-// Legacy functions kept for backward compatibility (not used with wallet auth)
 export const signup = async () => {
   throw new Error('Email/password signup not supported. Use connectWallet instead.');
 };

@@ -9,7 +9,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { getBalances, settleUp, Balance } from '@/apis/balances';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getSolToUsdRate, convertUsdToSol } from '@/solana/transaction';
-import { useMWA } from '@/utils/mwa';
+import { useMobileWalletAdapter } from '@wallet-ui/react-native-web3js';
+import { useConnection } from '@/components/providers';
 import { Transaction, SystemProgram, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import Toast from 'react-native-toast-message';
 
@@ -20,7 +21,10 @@ export default function BalancesScreen() {
   const colors = Colors[colorScheme ?? 'light'];
 
   // Solana hooks
-  const { publicKey, connection, signAndSendTransaction, connected } = useMWA();
+  const { account, signAndSendTransaction } = useMobileWalletAdapter();
+  const connection = useConnection();
+  const publicKey = account?.publicKey;
+  const connected = !!account;
 
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [balances, setBalances] = useState<Balance[]>([]);
@@ -137,7 +141,6 @@ export default function BalancesScreen() {
         })
       );
 
-      // Step 3: Sign and send transaction
       const signature = await signAndSendTransaction(transaction);
       console.log('Transaction sent:', signature);
 
