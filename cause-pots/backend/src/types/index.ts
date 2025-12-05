@@ -88,6 +88,7 @@ export type AddContributionRequest = {
 }
 
 export type AddFriendRequest = {
+  currentUserAddress: string
   address: string
   displayName?: string
 }

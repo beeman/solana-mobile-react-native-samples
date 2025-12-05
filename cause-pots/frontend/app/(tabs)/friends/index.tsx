@@ -88,25 +88,26 @@ export default function FriendsScreen() {
       }
 
       // Call backend API to add friend
-      await addFriendAPI({
+      const friendData = await addFriendAPI({
         currentUserAddress: user.address,
         address,
       })
 
-      // Also update local store for immediate UI feedback
-      addFriend(publicKey, address)
+      // Update local store with friend data from API response
+      addFriend(publicKey, address, friendData.displayName)
 
       setAddressInput('')
       setShowAddFriend(false)
       showToast({
         title: 'Friend added',
-        message: ellipsify(address, 12),
+        message: friendData.displayName || ellipsify(address, 12),
         type: 'success',
       })
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to add friend'
       showToast({
         title: 'Error',
-        message: error instanceof Error ? error.message : 'Failed to add friend',
+        message: errorMessage,
         type: 'error',
       })
     }

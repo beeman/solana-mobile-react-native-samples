@@ -15,21 +15,18 @@ router.post('/', async (req: Request, res: Response) => {
       return
     }
 
-    // Get or create the friend user
-    let friendUser = await db.get<any>(
+    // Check if friend user exists in database
+    const friendUser = await db.get<any>(
       'SELECT * FROM users WHERE address = ? OR pubkey = ?',
       [friendData.address, friendData.address]
     )
 
     if (!friendUser) {
-      // Create user for friend
-      const userId = uuidv4()
-      const now = new Date().toISOString()
-      await db.run(
-        'INSERT INTO users (id, pubkey, address, name, is_profile_complete, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
-        [userId, friendData.address, friendData.address, friendData.displayName || null, friendData.displayName ? 1 : 0, now, now]
-      )
-      friendUser = await db.get<any>('SELECT * FROM users WHERE id = ?', [userId])
+      res.status(404).json({
+        error: 'User not found',
+        message: 'The address you entered does not exist in our database. Please use an address from the seed data or create a user first.'
+      })
+      return
     }
 
     // Get current user from header/body (for now, we'll assume it's passed)

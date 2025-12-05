@@ -12,7 +12,9 @@ export async function addFriend(request: AddFriendRequest): Promise<Friend> {
   })
 
   if (!response.ok) {
-    throw new Error('Failed to add friend')
+    const errorData = await response.json().catch(() => ({}))
+    const errorMessage = errorData.message || errorData.error || 'Failed to add friend'
+    throw new Error(errorMessage)
   }
 
   return await response.json()

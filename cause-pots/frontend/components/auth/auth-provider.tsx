@@ -20,10 +20,17 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const { user, authenticate, restoreUser, logout } = useWalletAuth()
   const { clearAll } = useAppStore()
 
-  // Restore user session on mount
+  // Disabled: Don't auto-restore user session - always show login page
+  // useEffect(() => {
+  //   restoreUser()
+  // }, [restoreUser])
+
+  // Clear store when not authenticated
   useEffect(() => {
-    restoreUser()
-  }, [restoreUser])
+    if (!account && !user) {
+      clearAll()
+    }
+  }, [account, user, clearAll])
 
   // Authenticate with backend when wallet connects
   useEffect(() => {
