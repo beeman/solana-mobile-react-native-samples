@@ -1,10 +1,11 @@
 import React, { useMemo, useState } from 'react'
-import { Alert, Platform, ScrollView, StyleSheet, TouchableOpacity, useColorScheme, View, Text } from 'react-native'
+import { Platform, ScrollView, StyleSheet, TouchableOpacity, useColorScheme, View, Text } from 'react-native'
 import { useRouter } from 'expo-router'
 import { LinearGradient } from 'expo-linear-gradient'
 import { PublicKey } from '@solana/web3.js'
 import { AppPage } from '@/components/app-page'
 import { AppText } from '@/components/app-text'
+import { AlertModal, AlertButton } from '@/components/pots/AlertModal'
 import { Colors } from '@/constants/colors'
 import { useToast } from '@/components/toast/toast-provider'
 import { useMobileWalletAdapter } from '@wallet-ui/react-native-web3js'
@@ -106,6 +107,18 @@ export default function CreatePotScreen() {
   })
   const isIOS = Platform.OS === 'ios'
 
+  const [alertModal, setAlertModal] = useState<{
+    visible: boolean
+    title: string
+    message: string
+    buttons?: AlertButton[]
+  }>({
+    visible: false,
+    title: '',
+    message: '',
+    buttons: [],
+  })
+
   const { fetchActivities } = useAppStore()
 
   const ensureFuture = (date: Date) => {
@@ -159,8 +172,22 @@ export default function CreatePotScreen() {
     })
 
   const create = async () => {
-    if (!account) return Alert.alert('Connect wallet', 'Please connect wallet.')
-    if (!valid) return Alert.alert('Invalid', 'Fill required fields properly.')
+    if (!account) {
+      setAlertModal({
+        visible: true,
+        title: 'Connect wallet',
+        message: 'Please connect wallet.',
+      })
+      return
+    }
+    if (!valid) {
+      setAlertModal({
+        visible: true,
+        title: 'Invalid',
+        message: 'Fill required fields properly.',
+      })
+      return
+    }
 
     try {
       const creatorAddress = account.publicKey.toBase58()
@@ -420,6 +447,15 @@ export default function CreatePotScreen() {
           onCustomDateChange={setCustomDate}
           onShowCustomPicker={() => setShowCustomPicker((s) => !s)}
           onApplyDate={applyDate}
+        />
+
+        <AlertModal
+          visible={alertModal.visible}
+          title={alertModal.title}
+          message={alertModal.message}
+          buttons={alertModal.buttons}
+          colors={colors}
+          onClose={() => setAlertModal({ visible: false, title: '', message: '', buttons: [] })}
         />
       </LinearGradient>
     </AppPage>

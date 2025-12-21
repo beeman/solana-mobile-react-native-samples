@@ -2,6 +2,7 @@ import { AppPage } from '@/components/app-page'
 import { AppText } from '@/components/app-text'
 import { AppView } from '@/components/app-view'
 import { AddContributorModal } from '@/components/pots/AddContributorModal'
+import { AlertModal, AlertButton } from '@/components/pots/AlertModal'
 import { ContributeModal } from '@/components/pots/ContributeModal'
 import { ContributionList } from '@/components/pots/ContributionList'
 import { ContributorList } from '@/components/pots/ContributorList'
@@ -20,7 +21,7 @@ import { useCurrencyConversion } from '@/hooks/use-currency-conversion'
 import { ellipsify } from '@/utils/ellipsify'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import React, { useCallback, useState } from 'react'
-import { Alert, ScrollView, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native'
+import { ScrollView, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native'
 import { PublicKey } from '@solana/web3.js'
 
 export default function PotDetailsScreen() {
@@ -50,6 +51,17 @@ export default function PotDetailsScreen() {
   const [editName, setEditName] = useState('')
   const [editDescription, setEditDescription] = useState('')
   const [activeTab, setActiveTab] = useState<'contributions' | 'contributors'>('contributions')
+  const [alertModal, setAlertModal] = useState<{
+    visible: boolean
+    title: string
+    message: string
+    buttons?: AlertButton[]
+  }>({
+    visible: false,
+    title: '',
+    message: '',
+    buttons: [],
+  })
 
   if (!pot) {
     return (
@@ -100,7 +112,11 @@ export default function PotDetailsScreen() {
   const handleContribute = async () => {
     const amount = parseFloat(contributionAmount)
     if (isNaN(amount) || amount <= 0) {
-      Alert.alert('Error', 'Please enter a valid amount greater than 0')
+      setAlertModal({
+        visible: true,
+        title: 'Error',
+        message: 'Please enter a valid amount greater than 0',
+      })
       return
     }
 
@@ -111,7 +127,11 @@ export default function PotDetailsScreen() {
       const potPubkey = pot.potPubkey || pot.id
 
       if (!pot.potPubkey) {
-        Alert.alert('Error', 'Pot not yet on blockchain. Please try again later.')
+        setAlertModal({
+          visible: true,
+          title: 'Error',
+          message: 'Pot not yet on blockchain. Please try again later.',
+        })
         return
       }
 
@@ -158,7 +178,11 @@ export default function PotDetailsScreen() {
 
   const handleSignRelease = async () => {
     if (!account || !connection) {
-      Alert.alert('Error', 'Wallet not connected')
+      setAlertModal({
+        visible: true,
+        title: 'Error',
+        message: 'Wallet not connected',
+      })
       return
     }
 
@@ -166,7 +190,11 @@ export default function PotDetailsScreen() {
       const potPubkey = pot.potPubkey || pot.id
 
       if (!pot.potPubkey) {
-        Alert.alert('Error', 'Pot not yet on blockchain. Please try again later.')
+        setAlertModal({
+          visible: true,
+          title: 'Error',
+          message: 'Pot not yet on blockchain. Please try again later.',
+        })
         return
       }
 
@@ -201,14 +229,19 @@ export default function PotDetailsScreen() {
 
   const handleRelease = () => {
     if (pot.isReleased) {
-      Alert.alert('Already Released', 'This pot has already been released.', [{ text: 'OK' }])
+      setAlertModal({
+        visible: true,
+        title: 'Already Released',
+        message: 'This pot has already been released.',
+      })
       return
     }
 
-    Alert.alert(
-      'Release Pot',
-      `Funds will be released to the pot creator (${ellipsify(pot.creatorAddress, 8)}). Continue?`,
-      [
+    setAlertModal({
+      visible: true,
+      title: 'Release Pot',
+      message: `Funds will be released to the pot creator (${ellipsify(pot.creatorAddress, 8)}). Continue?`,
+      buttons: [
         { text: 'Cancel', style: 'cancel' },
         {
           text: 'Release',
@@ -218,7 +251,11 @@ export default function PotDetailsScreen() {
               const recipient = pot.creatorAddress // Funds go to the creator
 
               if (!pot.potPubkey) {
-                Alert.alert('Error', 'Pot not yet on blockchain. Please try again later.')
+                setAlertModal({
+                  visible: true,
+                  title: 'Error',
+                  message: 'Pot not yet on blockchain. Please try again later.',
+                })
                 return
               }
 
@@ -249,13 +286,17 @@ export default function PotDetailsScreen() {
             }
           },
         },
-      ]
-    )
+      ],
+    })
   }
 
   const handleEdit = (name: string, description: string) => {
     if (!name.trim()) {
-      Alert.alert('Error', 'Please enter a pot name')
+      setAlertModal({
+        visible: true,
+        title: 'Error',
+        message: 'Please enter a pot name',
+      })
       return
     }
 
@@ -436,6 +477,15 @@ export default function PotDetailsScreen() {
         colors={colors}
         onClose={() => setShowAddContributorModal(false)}
         onSelectFriend={handleAddContributor}
+      />
+
+      <AlertModal
+        visible={alertModal.visible}
+        title={alertModal.title}
+        message={alertModal.message}
+        buttons={alertModal.buttons}
+        colors={colors}
+        onClose={() => setAlertModal({ visible: false, title: '', message: '', buttons: [] })}
       />
     </AppPage>
   )
