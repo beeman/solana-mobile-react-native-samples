@@ -171,14 +171,15 @@ export default function PotsScreen() {
                 const categoryColor = getCategoryColor(pot.category)
 
                 return (
-                  <View key={pot.id} style={{ marginBottom: 12 }}>
+                  <TouchableOpacity
+                    key={pot.id}
+                    activeOpacity={0.95}
+                    onPress={() => router.push(`/(tabs)/pots/${pot.id}`)}
+                    style={{ marginBottom: 12 }}
+                  >
                     <View style={[styles.potCard, cardStyle, { backgroundColor: palette.surface }]}>
                       {/* Header */}
-                      <TouchableOpacity
-                        activeOpacity={0.95}
-                        onPress={() => router.push(`/(tabs)/pots/${pot.id}`)}
-                        style={styles.potHeader}
-                      >
+                      <View style={styles.potHeader}>
                         <View style={styles.potLeft}>
                           <View style={[styles.potIcon, { backgroundColor: `${categoryColor}15` }]}>
                             <MaterialIcons name={getCategoryIcon(pot.category) as any} size={18} color={categoryColor} />
@@ -199,7 +200,7 @@ export default function PotsScreen() {
                             <Text style={[styles.badgeText, { color: palette.accent }]}>Released</Text>
                           </View>
                         )}
-                      </TouchableOpacity>
+                      </View>
 
                       {/* Progress Section */}
                       <View style={styles.progressSection}>
@@ -241,7 +242,7 @@ export default function PotsScreen() {
 
                       {/* Action Buttons */}
                       <View style={styles.actionButtons}>
-                        <TouchableOpacity
+                        <View
                           style={[
                             styles.actionButton,
                             styles.contributeButton,
@@ -250,12 +251,6 @@ export default function PotsScreen() {
                             },
                             isComplete && styles.actionButtonDisabled,
                           ]}
-                          disabled={isComplete}
-                          activeOpacity={0.7}
-                          onPress={() => {
-                            // TODO: Handle contribute action
-                            router.push(`/(tabs)/pots/${pot.id}`)
-                          }}
                         >
                           <MaterialIcons
                             name="add-circle-outline"
@@ -270,9 +265,9 @@ export default function PotsScreen() {
                           >
                             Contribute
                           </AppText>
-                        </TouchableOpacity>
+                        </View>
 
-                        <TouchableOpacity
+                        <View
                           style={[
                             styles.actionButton,
                             styles.releaseButton,
@@ -281,12 +276,6 @@ export default function PotsScreen() {
                               : { backgroundColor: palette.surfaceMuted },
                             !canRelease && styles.actionButtonDisabled,
                           ]}
-                          disabled={!canRelease}
-                          activeOpacity={0.7}
-                          onPress={() => {
-                            // TODO: Handle release action
-                            router.push(`/(tabs)/pots/${pot.id}`)
-                          }}
                         >
                           <MaterialIcons
                             name="check-circle-outline"
@@ -301,10 +290,10 @@ export default function PotsScreen() {
                           >
                             Release
                           </AppText>
-                        </TouchableOpacity>
+                        </View>
                       </View>
                     </View>
-                  </View>
+                  </TouchableOpacity>
                 )
               })}
             </View>
