@@ -1,14 +1,14 @@
 import React, { Fragment } from 'react'
 import { Linking, StyleSheet } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
-import { useMobileWalletAdapter } from '@wallet-ui/react-native-web3js'
+import { useMobileWallet } from '@wallet-ui/react-native-web3js'
 import { ellipsify } from '@/utils/ellipsify'
 import { UiIconSymbol } from '@/components/ui/ui-icon-symbol'
 import { AppConfig } from '@/constants/app-config'
 import { AppText } from '@/components/app-text'
 import * as Dropdown from '@rn-primitives/dropdown-menu'
 import { WalletUiButtonConnect } from './wallet-ui-button-connect'
-import { useMobileWalletAdapterTheme } from '@/components/solana/use-wallet-ui-theme'
+import { useMobileWalletTheme } from '@/components/solana/use-wallet-ui-theme'
 
 function getExplorerUrl(path: string): string {
   const cluster = AppConfig.clusters[0]
@@ -17,7 +17,7 @@ function getExplorerUrl(path: string): string {
 }
 
 function useDropdownItems() {
-  const { account, disconnect } = useMobileWalletAdapter()
+  const { account, disconnect } = useMobileWallet()
   if (!account) {
     return []
   }
@@ -38,8 +38,8 @@ function useDropdownItems() {
 }
 
 export function WalletUiDropdown() {
-  const { account } = useMobileWalletAdapter()
-  const { backgroundColor, borderColor, textColor } = useMobileWalletAdapterTheme()
+  const { account } = useMobileWallet()
+  const { backgroundColor, borderColor, textColor } = useMobileWalletTheme()
 
   const items = useDropdownItems()
 

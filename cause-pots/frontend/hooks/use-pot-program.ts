@@ -1,11 +1,11 @@
 import { useMemo } from 'react'
 import { PublicKey } from '@solana/web3.js'
-import { useMobileWalletAdapter } from '@wallet-ui/react-native-web3js'
+import { useMobileWallet } from '@wallet-ui/react-native-web3js'
 import { PotProgramService } from '@/services/pot-program'
 import { useTransaction } from './use-transaction'
 
 export function usePotProgram() {
-  const { connection, account } = useMobileWalletAdapter()
+  const { connection, account } = useMobileWallet()
   const { executeTransaction, isLoading, error } = useTransaction()
 
   // Create program service instance

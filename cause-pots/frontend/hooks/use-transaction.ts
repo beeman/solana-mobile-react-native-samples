@@ -1,9 +1,9 @@
 import { useState, useCallback } from 'react'
 import { Transaction, TransactionMessage, VersionedTransaction } from '@solana/web3.js'
-import { useMobileWalletAdapter } from '@wallet-ui/react-native-web3js'
+import { useMobileWallet } from '@wallet-ui/react-native-web3js'
 
 export function useTransaction() {
-  const { connection, signAndSendTransaction } = useMobileWalletAdapter()
+  const { connection, signAndSendTransaction } = useMobileWallet()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
 

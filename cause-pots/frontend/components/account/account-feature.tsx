@@ -1,4 +1,4 @@
-import { useMobileWalletAdapter } from '@wallet-ui/react-native-web3js'
+import { useMobileWallet } from '@wallet-ui/react-native-web3js'
 import { AppText } from '@/components/app-text'
 import { useScrollContext } from '@/components/tab-bar/scroll-context'
 import { ellipsify } from '@/utils/ellipsify'
@@ -23,7 +23,7 @@ import { AppConfig } from '@/constants/app-config'
 import { useAuth } from '@/components/auth/auth-provider'
 
 export function AccountFeature() {
-  const { account } = useMobileWalletAdapter()
+  const { account } = useMobileWallet()
   const { signOut, user } = useAuth()
   const router = useRouter()
   const colorScheme = useColorScheme()

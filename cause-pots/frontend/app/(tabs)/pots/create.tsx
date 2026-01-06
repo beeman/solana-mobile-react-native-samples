@@ -8,7 +8,7 @@ import { AppText } from '@/components/app-text'
 import { AlertModal, AlertButton } from '@/components/pots/AlertModal'
 import { Colors } from '@/constants/colors'
 import { useToast } from '@/components/toast/toast-provider'
-import { useMobileWalletAdapter } from '@wallet-ui/react-native-web3js'
+import { useMobileWallet } from '@wallet-ui/react-native-web3js'
 import { useAppStore, PotCategory } from '@/store/app-store'
 import { usePotProgram } from '@/hooks/use-pot-program'
 import { useCurrencyConversion } from '@/hooks/use-currency-conversion'
@@ -44,7 +44,7 @@ export default function CreatePotScreen() {
   const isDark = colorScheme === 'dark'
   const colors = Colors[isDark ? 'dark' : 'light']
 
-  const { account } = useMobileWalletAdapter()
+  const { account } = useMobileWallet()
   const { friends, createPot } = useAppStore()
   const { showToast } = useToast()
   const { createPot: createPotOnChain, isLoading: isCreatingOnChain, programService } = usePotProgram()

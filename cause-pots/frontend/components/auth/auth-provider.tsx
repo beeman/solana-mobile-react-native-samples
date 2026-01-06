@@ -1,5 +1,5 @@
 import React, { createContext, PropsWithChildren, useContext, useState, useCallback, useEffect } from 'react'
-import { useMobileWalletAdapter } from '@wallet-ui/react-native-web3js'
+import { useMobileWallet } from '@wallet-ui/react-native-web3js'
 import { useWalletAuth } from '@/hooks/useWalletAuth'
 import { useAppStore } from '@/store/app-store'
 import type { User } from '@/api/types'
@@ -18,7 +18,7 @@ const AuthContext = createContext<AuthProviderState>({} as AuthProviderState)
 export function AuthProvider({ children }: PropsWithChildren) {
   const [isLoading, setIsLoading] = useState(false)
   const [hasAuthenticated, setHasAuthenticated] = useState(false)
-  const { account, connect, disconnect } = useMobileWalletAdapter()
+  const { account, connect, disconnect } = useMobileWallet()
   const { user, authenticate, restoreUser, logout, updateUserState } = useWalletAuth()
   const { clearAll } = useAppStore()
 

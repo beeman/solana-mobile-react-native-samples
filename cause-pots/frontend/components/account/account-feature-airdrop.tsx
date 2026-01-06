@@ -1,14 +1,14 @@
 import { AppView } from '@/components/app-view'
 import { AppText } from '@/components/app-text'
 import { PublicKey } from '@solana/web3.js'
-import { useMobileWalletAdapter } from '@wallet-ui/react-native-web3js'
+import { useMobileWallet } from '@wallet-ui/react-native-web3js'
 import { Button } from '@react-navigation/elements'
 import React from 'react'
 import { ActivityIndicator } from 'react-native'
 import { useRequestAirdrop } from '@/components/account/use-request-airdrop'
 
 export function AccountFeatureAirdrop({ back }: { back: () => void }) {
-  const { account } = useMobileWalletAdapter()
+  const { account } = useMobileWallet()
   const amount = 1
   const requestAirdrop = useRequestAirdrop({ address: account?.publicKey as PublicKey })
 

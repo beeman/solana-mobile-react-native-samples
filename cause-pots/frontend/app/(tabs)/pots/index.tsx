@@ -1,7 +1,7 @@
 import { AppPage } from '@/components/app-page'
 import { AppText } from '@/components/app-text'
 import { FloatingActionButton } from '@/components/floating-action-button'
-import { useMobileWalletAdapter } from '@wallet-ui/react-native-web3js'
+import { useMobileWallet } from '@wallet-ui/react-native-web3js'
 import { useScrollContext } from '@/components/tab-bar/scroll-context'
 import { CircularProgress } from '@/components/ui/circular-progress'
 import { Fonts } from '@/constants/fonts'
@@ -36,7 +36,7 @@ export default function PotsScreen() {
   const filterButtonRef = useRef<View>(null)
   const [filterButtonLayout, setFilterButtonLayout] = useState({ x: 0, y: 0, width: 0, height: 0 })
 
-  const { account } = useMobileWalletAdapter()
+  const { account } = useMobileWallet()
   const { getUserPots, pots } = useAppStore()
   // Show all pots if user is connected, or filter by user address
   const allUserPots = account ? (() => {

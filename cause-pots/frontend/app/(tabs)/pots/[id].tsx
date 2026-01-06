@@ -11,7 +11,7 @@ import { PotHeader } from '@/components/pots/PotHeader'
 import { PotInfoCard } from '@/components/pots/PotInfoCard'
 import { PotProgressCard } from '@/components/pots/PotProgressCard'
 import { PotTabs } from '@/components/pots/PotTabs'
-import { useMobileWalletAdapter } from '@wallet-ui/react-native-web3js'
+import { useMobileWallet } from '@wallet-ui/react-native-web3js'
 import { useToast } from '@/components/toast/toast-provider'
 import { Colors } from '@/constants/colors'
 import { PotCategory, useAppStore } from '@/store/app-store'
@@ -30,7 +30,7 @@ export default function PotDetailsScreen() {
   const colorScheme = useColorScheme()
   const isDark = colorScheme === 'dark'
   const colors = Colors[isDark ? 'dark' : 'light']
-  const { account, connection } = useMobileWalletAdapter()
+  const { account, connection } = useMobileWallet()
   const { getPotById, addContribution, releasePot, updatePot, friends, fetchActivities, refreshPot } = useAppStore()
   const { showToast } = useToast()
   const {

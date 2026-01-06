@@ -9,7 +9,7 @@ import {
   Platform,
 } from 'react-native';
 import { useAppStore } from '@/store/app-store';
-import { useMobileWalletAdapter } from '@wallet-ui/react-native-web3js';
+import { useMobileWallet } from '@wallet-ui/react-native-web3js';
 import { AppText } from '@/components/app-text';
 import { AppPage } from '@/components/app-page';
 import { useScrollContext } from '@/components/tab-bar/scroll-context';
@@ -30,7 +30,7 @@ export default function ActivityScreen() {
   const { showToast } = useToast();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const { account } = useMobileWalletAdapter();
+  const { account } = useMobileWallet();
   const { activities, getFriendByAddress, fetchActivities } = useAppStore();
   const router = useRouter();
 
