@@ -26,7 +26,10 @@ npm run seed
 ```env
 PORT=3000
 DB_PATH=./data/cause-pots.db
+CORS_ORIGIN=*  # For demo only! Set specific origin for production
 ```
+
+**Security Note**: The default CORS configuration allows all origins (`*`). For production deployments, configure `CORS_ORIGIN` to your frontend's specific URL (e.g., `https://yourapp.com`).
 
 ## API Endpoints
 
@@ -34,6 +37,15 @@ DB_PATH=./data/cause-pots.db
 
 - `GET /health` - Check server and database health
 - `GET /` - API information
+
+### Users
+
+- `POST /api/users/auth` - Authenticate or create user with wallet
+- `GET /api/users/:id` - Get user by ID
+- `GET /api/users/by-address/:address` - Get user by wallet address
+- `PATCH /api/users/:id` - Update user profile
+- `GET /api/users` - Get all users (for debugging/testing)
+- `POST /api/users/resolve` - Resolve .skr domain to address or vice versa
 
 ### Pots
 
@@ -78,14 +90,17 @@ backend/
 │   │   ├── init.ts           # Database initialization script
 │   │   └── schema.sql        # Database schema
 │   ├── routes/
+│   │   ├── users.ts          # User authentication endpoints
 │   │   ├── pots.ts           # Pot endpoints
 │   │   ├── friends.ts        # Friend endpoints
 │   │   └── activities.ts     # Activity endpoints
+│   ├── utils/
+│   │   └── domain.ts         # .skr domain resolution utilities
 │   ├── types/
 │   │   └── index.ts          # TypeScript type definitions
 │   └── index.ts              # Main server file
 ├── data/                     # Database files (auto-created)
-├── .env.example              # Example environment variables
+├── .env                      # Environment variables (create this)
 ├── .gitignore               # Git ignore rules
 ├── package.json             # Dependencies and scripts
 ├── tsconfig.json            # TypeScript configuration
@@ -95,6 +110,7 @@ backend/
 ## Database Schema
 
 **Tables:**
+- `users` - User profiles with wallet authentication
 - `pots` - Pot information with multi-sig tracking
 - `pot_contributors` - Junction table for contributors
 - `contributions` - Individual contributions

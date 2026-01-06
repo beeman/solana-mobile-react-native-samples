@@ -1,6 +1,5 @@
 import { Program, AnchorProvider, BN, web3 } from '@coral-xyz/anchor'
 import { Connection, PublicKey, Transaction, SystemProgram } from '@solana/web3.js'
-import { AppConfig } from '@/constants/app-config'
 import { Contract, IDL } from '@/idl'
 
 export class PotProgramService {

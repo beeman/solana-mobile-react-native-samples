@@ -61,16 +61,18 @@ EXPO_PUBLIC_PROGRAM_ID=CTtGEyhWsub71K9bDKJZbaBDNbqNk54fUuh4pLB8M5sR
 
 ## Anchor IDL Setup
 
-This app uses Anchor 0.32 which requires the IDL (Interface Definition Language) file at `idl/idl.json`.
+This app uses Anchor 0.32 which requires the IDL (Interface Definition Language) files to be copied from the contract after building.
 
 If you encounter IDL-related errors, regenerate from the contract:
 ```bash
 cd ../contract
 anchor build
-cp target/idl/contract.json ../frontend/idl/idl.json
+# Copy BOTH generated files
+cp target/idl/contract.json ../frontend/idl/contract.json
+cp target/types/contract.ts ../frontend/idl/idl.ts
 ```
 
-See [TECHNICAL-GUIDE.md](TECHNICAL-GUIDE.md#anchor-framework--idl-setup) for details.
+See [TECHNICAL-GUIDE.md](TECHNICAL-GUIDE.md#anchor-framework--idl) for details.
 
 ## Key Features
 
@@ -95,7 +97,12 @@ See [TECHNICAL-GUIDE.md](TECHNICAL-GUIDE.md#anchor-framework--idl-setup) for det
 
 ### IDL parse error / Invalid program ID
 1. Verify program ID in `.env` matches deployed contract
-2. Regenerate IDL: `cd ../contract && anchor build && cp target/idl/contract.json ../frontend/idl/idl.json`
+2. Regenerate IDL:
+   ```bash
+   cd ../contract && anchor build
+   cp target/idl/contract.json ../frontend/idl/contract.json
+   cp target/types/contract.ts ../frontend/idl/idl.ts
+   ```
 3. Rebuild: `npx expo prebuild --clean && npx expo run:android`
 
 ### Network request failed / API unreachable

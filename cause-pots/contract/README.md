@@ -78,11 +78,21 @@ Create a new savings pot with time-lock and multi-sig configuration.
 - Name length ≤ 32 characters
 - Description length ≤ 200 characters
 - Target amount > 0
-- Unlock days > 0 (internally converted to Unix timestamp: `current_time + days * 86400`)
 - Signers required > 0
+
+**Note:** `unlock_days` can be 0 for immediate/same-day unlock. It's converted to Unix timestamp: `current_time + (unlock_days * 86400)`
 
 **Example:**
 ```typescript
+const [potPDA] = PublicKey.findProgramAddressSync(
+  [Buffer.from("pot"), authority.publicKey.toBuffer(), Buffer.from("Trip Fund")],
+  program.programId
+);
+const [vaultPDA] = PublicKey.findProgramAddressSync(
+  [Buffer.from("vault"), potPDA.toBuffer()],
+  program.programId
+);
+
 await program.methods
   .createPot(
     "Trip Fund",
@@ -93,6 +103,7 @@ await program.methods
   )
   .accounts({
     pot: potPDA,
+    potVault: vaultPDA,
     authority: authority.publicKey,
     systemProgram: SystemProgram.programId,
   })
@@ -119,10 +130,20 @@ Contribute SOL to a pot. Automatically creates contributor account on first cont
 
 **Example:**
 ```typescript
+const [vaultPDA] = PublicKey.findProgramAddressSync(
+  [Buffer.from("vault"), potPDA.toBuffer()],
+  program.programId
+);
+const [contributorPDA] = PublicKey.findProgramAddressSync(
+  [Buffer.from("contributor"), potPDA.toBuffer(), contributor.publicKey.toBuffer()],
+  program.programId
+);
+
 await program.methods
   .contribute(new anchor.BN(2 * LAMPORTS_PER_SOL))
   .accounts({
     pot: potPDA,
+    potVault: vaultPDA,
     contributorAccount: contributorPDA,
     contributor: contributor.publicKey,
     systemProgram: SystemProgram.programId,
@@ -173,12 +194,19 @@ Release pot funds to a recipient. Requires signature threshold and authority.
 
 **Example:**
 ```typescript
+const [vaultPDA] = PublicKey.findProgramAddressSync(
+  [Buffer.from("vault"), potPDA.toBuffer()],
+  program.programId
+);
+
 await program.methods
   .releaseFunds(recipient.publicKey)
   .accounts({
     pot: potPDA,
+    potVault: vaultPDA,
     authority: authority.publicKey,
     recipient: recipient.publicKey,
+    systemProgram: SystemProgram.programId,
   })
   .signers([authority])
   .rpc();
@@ -214,29 +242,28 @@ await program.methods
 | 6000 | `NameTooLong` | Pot name exceeds 32 characters |
 | 6001 | `DescriptionTooLong` | Description exceeds 200 characters |
 | 6002 | `InvalidTargetAmount` | Target amount must be > 0 |
-| 6003 | `InvalidUnlockPeriod` | Unlock period must be > 0 days |
-| 6004 | `InvalidSignersRequired` | Signers required must be > 0 |
-| 6005 | `InvalidAmount` | Contribution amount must be > 0 |
-| 6006 | `PotAlreadyReleased` | Cannot modify released pot |
-| 6007 | `TimeLockNotExpired` | Time-lock period not expired |
-| 6008 | `NotAContributor` | Only contributors can sign |
-| 6009 | `AlreadySigned` | Contributor already signed |
-| 6010 | `InsufficientSignatures` | Not enough signatures for release |
-| 6011 | `AlreadyAContributor` | Contributor already exists |
-| 6012 | `InsufficientFunds` | Pot doesn't have enough funds |
-| 6013 | `Overflow` | Arithmetic overflow |
+| 6003 | `InvalidSignersRequired` | Signers required must be > 0 |
+| 6004 | `InvalidAmount` | Contribution amount must be > 0 |
+| 6005 | `PotAlreadyReleased` | Cannot modify released pot |
+| 6006 | `TimeLockNotExpired` | Time-lock period not expired |
+| 6007 | `NotAContributor` | Only contributors can sign |
+| 6008 | `AlreadySigned` | Contributor already signed |
+| 6009 | `InsufficientSignatures` | Not enough signatures for release |
+| 6010 | `AlreadyAContributor` | Contributor already exists |
+| 6011 | `InsufficientFunds` | Pot doesn't have enough funds |
+| 6012 | `Overflow` | Arithmetic overflow |
 
 ## Testing
 
 The contract includes 18 comprehensive tests covering all functionality:
 
 **Test Coverage:**
-- ✓ Pot creation with validation (7 tests)
-- ✓ Contribution tracking and account creation (4 tests)
-- ✓ Multi-sig signing with time-lock enforcement (2 tests)
-- ✓ Fund release with threshold validation (2 tests)
-- ✓ Contributor management (2 tests)
-- ✓ Complete lifecycle integration (1 test)
+- Pot creation with validation (7 tests)
+- Contribution tracking and account creation (4 tests)
+- Multi-sig signing with time-lock enforcement (2 tests)
+- Fund release with threshold validation (2 tests)
+- Contributor management (2 tests)
+- Complete lifecycle integration (1 test)
 
 **Run Tests:**
 ```bash
