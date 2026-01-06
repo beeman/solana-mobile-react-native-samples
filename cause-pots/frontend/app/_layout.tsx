@@ -15,31 +15,15 @@ SplashScreen.preventAutoHideAsync()
 
 export default function RootLayout() {
   // Use this hook to track the locations for analytics or debugging.
-  // Delete if you don't need it.
   useTrackLocations((pathname, params) => {
-    console.log(`Track ${pathname}`, { params })
+    // Track location changes - integrate with analytics service here if needed
   })
-  // Load IBM Plex fonts if available, otherwise use system fonts
   const [loaded] = useFonts({
-    // IBM Plex fonts - add these files to assets/fonts/ when available
-    // IBMPlexSans: require('../assets/fonts/IBMPlexSans-Regular.ttf'),
-    // 'IBMPlexSans-Medium': require('../assets/fonts/IBMPlexSans-Medium.ttf'),
-    // 'IBMPlexSans-SemiBold': require('../assets/fonts/IBMPlexSans-SemiBold.ttf'),
-    // 'IBMPlexSans-Bold': require('../assets/fonts/IBMPlexSans-Bold.ttf'),
-    // IBMPlexMono: require('../assets/fonts/IBMPlexMono-Regular.ttf'),
-    // 'IBMPlexMono-Medium': require('../assets/fonts/IBMPlexMono-Medium.ttf'),
-    // 'IBMPlexMono-SemiBold': require('../assets/fonts/IBMPlexMono-SemiBold.ttf'),
-    
-    // Temporary: Keep existing font for now
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   })
 
   const onLayoutRootView = useCallback(async () => {
-    console.log('onLayoutRootView')
     if (loaded) {
-      console.log('loaded')
-      // Hide splash screen once fonts are loaded
-      // AppSplashController will handle hiding when auth is ready
       await SplashScreen.hideAsync()
     }
   }, [loaded])

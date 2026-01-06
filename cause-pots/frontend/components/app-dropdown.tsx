@@ -2,7 +2,10 @@ import React, { useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useThemeColor } from '@/hooks/use-theme-color'
 
-// TODO: Implement using @rn-primitives/dropdown-menu like in WalletUiDropdown
+/**
+ * Simple dropdown component with theme support.
+ * For production apps, consider using @rn-primitives/dropdown-menu for enhanced accessibility.
+ */
 export function AppDropdown({
   items,
   selectedItem,

@@ -22,11 +22,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const { user, authenticate, restoreUser, logout, updateUserState } = useWalletAuth()
   const { clearAll } = useAppStore()
 
-  // Disabled: Don't auto-restore user session - always show login page
-  // useEffect(() => {
-  //   restoreUser()
-  // }, [restoreUser])
-
   // Clear store when not authenticated
   useEffect(() => {
     if (!account && !user) {

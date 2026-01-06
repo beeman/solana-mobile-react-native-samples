@@ -12,6 +12,8 @@ dotenv.config()
 const app = express()
 const PORT = process.env.PORT || 3000
 
+// CORS configuration - allows all origins for demo/development
+// ⚠️ For production: Configure specific allowed origins in .env
 app.use(cors({
   origin: process.env.CORS_ORIGIN || '*'
 }))
