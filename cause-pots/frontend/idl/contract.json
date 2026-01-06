@@ -1,0 +1,573 @@
+{
+  "address": "CTtGEyhWsub71K9bDKJZbaBDNbqNk54fUuh4pLB8M5sR",
+  "metadata": {
+    "name": "contract",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "add_contributor",
+      "docs": [
+        "Add a contributor to the pot (authority only)"
+      ],
+      "discriminator": [
+        125,
+        221,
+        162,
+        182,
+        191,
+        26,
+        206,
+        219
+      ],
+      "accounts": [
+        {
+          "name": "pot",
+          "writable": true
+        },
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "pot"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "new_contributor",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "contribute",
+      "docs": [
+        "Contribute SOL to a pot"
+      ],
+      "discriminator": [
+        82,
+        33,
+        68,
+        131,
+        32,
+        0,
+        205,
+        95
+      ],
+      "accounts": [
+        {
+          "name": "pot",
+          "writable": true
+        },
+        {
+          "name": "pot_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pot"
+              }
+            ]
+          }
+        },
+        {
+          "name": "contributor_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  116,
+                  114,
+                  105,
+                  98,
+                  117,
+                  116,
+                  111,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pot"
+              },
+              {
+                "kind": "account",
+                "path": "contributor"
+              }
+            ]
+          }
+        },
+        {
+          "name": "contributor",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "create_pot",
+      "docs": [
+        "Create a new savings pot with time-lock and multi-sig requirements"
+      ],
+      "discriminator": [
+        232,
+        45,
+        123,
+        181,
+        204,
+        121,
+        131,
+        9
+      ],
+      "accounts": [
+        {
+          "name": "pot",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  111,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              },
+              {
+                "kind": "arg",
+                "path": "name"
+              }
+            ]
+          }
+        },
+        {
+          "name": "pot_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pot"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "name": "target_amount",
+          "type": "u64"
+        },
+        {
+          "name": "unlock_days",
+          "type": "i64"
+        },
+        {
+          "name": "signers_required",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "release_funds",
+      "docs": [
+        "Release funds to recipient (requires threshold signatures)"
+      ],
+      "discriminator": [
+        225,
+        88,
+        91,
+        108,
+        126,
+        52,
+        2,
+        26
+      ],
+      "accounts": [
+        {
+          "name": "pot",
+          "writable": true
+        },
+        {
+          "name": "pot_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "pot"
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "pot"
+          ]
+        },
+        {
+          "name": "recipient",
+          "writable": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "recipient",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "sign_release",
+      "docs": [
+        "Sign to approve release (multi-sig)"
+      ],
+      "discriminator": [
+        111,
+        211,
+        85,
+        96,
+        119,
+        69,
+        197,
+        105
+      ],
+      "accounts": [
+        {
+          "name": "pot",
+          "writable": true
+        },
+        {
+          "name": "signer",
+          "signer": true
+        }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "ContributorAccount",
+      "discriminator": [
+        14,
+        30,
+        60,
+        53,
+        185,
+        245,
+        180,
+        86
+      ]
+    },
+    {
+      "name": "PotAccount",
+      "discriminator": [
+        202,
+        25,
+        205,
+        47,
+        59,
+        253,
+        100,
+        118
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "NameTooLong",
+      "msg": "Pot name is too long (max 32 characters)"
+    },
+    {
+      "code": 6001,
+      "name": "DescriptionTooLong",
+      "msg": "Pot description is too long (max 200 characters)"
+    },
+    {
+      "code": 6002,
+      "name": "InvalidTargetAmount",
+      "msg": "Target amount must be greater than 0"
+    },
+    {
+      "code": 6003,
+      "name": "InvalidSignersRequired",
+      "msg": "Signers required must be greater than 0"
+    },
+    {
+      "code": 6004,
+      "name": "InvalidAmount",
+      "msg": "Contribution amount must be greater than 0"
+    },
+    {
+      "code": 6005,
+      "name": "PotAlreadyReleased",
+      "msg": "Pot has already been released"
+    },
+    {
+      "code": 6006,
+      "name": "TimeLockNotExpired",
+      "msg": "Time-lock period has not expired yet"
+    },
+    {
+      "code": 6007,
+      "name": "NotAContributor",
+      "msg": "You are not a contributor to this pot"
+    },
+    {
+      "code": 6008,
+      "name": "AlreadySigned",
+      "msg": "You have already signed the release"
+    },
+    {
+      "code": 6009,
+      "name": "InsufficientSignatures",
+      "msg": "Insufficient signatures for release"
+    },
+    {
+      "code": 6010,
+      "name": "AlreadyAContributor",
+      "msg": "Already a contributor"
+    },
+    {
+      "code": 6011,
+      "name": "InsufficientFunds",
+      "msg": "Insufficient funds in pot"
+    },
+    {
+      "code": 6012,
+      "name": "Overflow",
+      "msg": "Arithmetic overflow"
+    }
+  ],
+  "types": [
+    {
+      "name": "ContributorAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "pot",
+            "docs": [
+              "References"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "contributor",
+            "type": "pubkey"
+          },
+          {
+            "name": "total_contributed",
+            "docs": [
+              "Contribution tracking"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "contribution_count",
+            "type": "u32"
+          },
+          {
+            "name": "last_contribution_at",
+            "type": "i64"
+          },
+          {
+            "name": "joined_at",
+            "docs": [
+              "Metadata"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PotAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "docs": [
+              "Creator and authority of the pot"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "vault",
+            "docs": [
+              "Vault PDA that holds the actual SOL"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "name",
+            "docs": [
+              "Pot metadata"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "name": "target_amount",
+            "docs": [
+              "Financial details"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "total_contributed",
+            "type": "u64"
+          },
+          {
+            "name": "unlock_timestamp",
+            "docs": [
+              "Time-lock"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "signers_required",
+            "docs": [
+              "Multi-sig configuration"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "signatures",
+            "type": {
+              "vec": "pubkey"
+            }
+          },
+          {
+            "name": "contributors",
+            "docs": [
+              "Contributors list"
+            ],
+            "type": {
+              "vec": "pubkey"
+            }
+          },
+          {
+            "name": "is_released",
+            "docs": [
+              "Release status"
+            ],
+            "type": "bool"
+          },
+          {
+            "name": "released_at",
+            "type": {
+              "option": "i64"
+            }
+          },
+          {
+            "name": "recipient",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "created_at",
+            "docs": [
+              "Metadata"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "vault_bump",
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ]
+}

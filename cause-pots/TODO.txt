@@ -1,0 +1,12 @@
+[] Edit pop up is wonky for pots
+[] Activity Page similar to how settle has it
+[] Fix logout button look
+[] + button shouldnt be there on friends page?
+[] Add option to add with .skr tag
+[] Create a login flow for basic profile
+[] Dont auto login, always show Login page when we open the app
+[] Fix Contribute screen pop up, right now coming below navigation of android
+[] Release Funds pop up needs to be better
+[] Custom option in Multi Signature list
+[] Option to sign for release?
+[] Add contributor option should not be there ater release
